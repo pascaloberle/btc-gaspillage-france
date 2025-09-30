@@ -163,6 +163,7 @@
                     <li>Ce manque à gagner n'inclut pas les potentiels retombées économiques de réindustrialiser la France avec une nouvelle industrie novatrice.</li>
                     <li>La création d'emplois dans des régions rurales et là où les containers de minage peuvent s'implémenter.</li>
                     <li>La potentielle mise en place de circularité en injectant une partie des profits dans les collectivités locales.</li>
+                    <li>Pour maximiser l'utilité du minage de Bitcoin dans la société : les profits du minage pourraient servir au bien-être des populations, à la transition bas-carbone, au développement des énergies renouvelables et à l'agroécologie par exemple.</li>
                     <li>Ce script calcule le potentiel manqué en milliards d'euros. Il suppose que la France aurait pu dédier une part fixe (1,2,5,10 ou 15%) de la puissance de hachage globale du Bitcoin depuis janvier 2018 (une hypothèse réaliste avec différents scénarios et basée sur une estimation d'électricité consommé globalement du Bitcoin ~500 TWh cumulés sur la période). Il fetch les données en temps réel (hauteur de bloc actuelle et prix du BTC en EUR) via des API gratuites. Le total est le nombre de BTC minés multiplié par le prix actuel, converti en milliards d'EUR.</li>
                     <li>Récupération en temps réel : Toutes les 10 minutes (600 000 ms), le JS fetch les données via les API (hauteur de bloc via Blockstream et prix via CoinGecko). Les API sont gratuites et CORS-compatibles.</li>
                     <li>Calculs dynamiques : J'ai intégré une fonction JS calculateMinedBtc qui miroite le calcul Python pour déterminer les BTC minés cumulés (en tenant compte des halvings). Le total gaspillage est recalculé comme (BTC # manqués totaux × prix actuel), et les compteurs s'animent vers les nouvelles valeurs.</li>
@@ -240,15 +241,15 @@
         }
 
         // Données embeddées initiales
-        const initialTotalEuros = 30988739362;
-        const initialBtc = 318473.4375;
-        const initialPrice = 97304;
-        const initialBlocks = 417615;
+        const initialTotalEuros = 31023801882;
+        const initialBtc = 318473.75;
+        const initialPrice = 97414;
+        const initialBlocks = 417616;
         const histData = [{"x": 2018.0, "y": 10000}, {"x": 2025.0, "y": 97000}];
         const powerData = [{"x": 2025.7392197125257, "y": 97304.0}, {"x": 2025.8213552361397, "y": 100106.0153679117}, {"x": 2025.9034907597536, "y": 102974.47824137984}, {"x": 2025.9856262833675, "y": 105910.62997206318}, {"x": 2026.0677618069815, "y": 108915.72891602549}, {"x": 2026.1498973305954, "y": 111991.05058275003}, {"x": 2026.2320328542094, "y": 115137.88778473182}, {"x": 2026.3141683778233, "y": 118357.55078764677}, {"x": 2026.3963039014375, "y": 121651.36746109746}, {"x": 2026.4784394250514, "y": 125020.68342993465}, {"x": 2026.5605749486654, "y": 128466.86222615429}, {"x": 2026.6427104722793, "y": 131991.28544136928}, {"x": 2026.7248459958932, "y": 135595.35287985552}, {"x": 2026.8069815195072, "y": 139280.48271217183}, {"x": 2026.8891170431211, "y": 143048.1116293528}, {"x": 2026.971252566735, "y": 146899.69499767467}, {"x": 2027.053388090349, "y": 150836.70701399306}, {"x": 2027.135523613963, "y": 154860.64086165253}, {"x": 2027.217659137577, "y": 158973.008866967}, {"x": 2027.299794661191, "y": 163175.34265627115}, {"x": 2027.381930184805, "y": 167469.19331354133}, {"x": 2027.464065708419, "y": 171856.13153858655}, {"x": 2027.546201232033, "y": 176337.74780580812}, {"x": 2027.6283367556468, "y": 180915.65252352812}, {"x": 2027.7104722792608, "y": 185591.4761938855}, {"x": 2027.7926078028747, "y": 190366.86957330012}, {"x": 2027.8747433264887, "y": 195243.50383350346}, {"x": 2027.9568788501026, "y": 200223.07072313607}, {"x": 2028.0390143737166, "y": 205307.28272991092}, {"x": 2028.1211498973305, "y": 210497.87324334236}, {"x": 2028.2032854209447, "y": 215796.59671803986}, {"x": 2028.2854209445586, "y": 221205.22883756674}, {"x": 2028.3675564681726, "y": 226725.56667886255}, {"x": 2028.4496919917865, "y": 232359.4288772292}, {"x": 2028.5318275154004, "y": 238108.6557918802}, {"x": 2028.6139630390144, "y": 243975.10967205244}, {"x": 2028.6960985626283, "y": 249960.67482368022}, {"x": 2028.7782340862423, "y": 256067.2577766308}, {"x": 2028.8603696098562, "y": 262296.7874525012}, {"x": 2028.9425051334701, "y": 268651.2153329758}, {"x": 2029.024640657084, "y": 275132.51562874415}, {"x": 2029.1067761806983, "y": 281742.6854489785}, {"x": 2029.1889117043122, "y": 288483.74497137096}, {"x": 2029.2710472279261, "y": 295357.7376127288}, {"x": 2029.35318275154, "y": 302366.73020012927}, {"x": 2029.435318275154, "y": 309512.81314263144}, {"x": 2029.517453798768, "y": 316798.10060354584}, {"x": 2029.599589322382, "y": 324224.7306732614}, {"x": 2029.6817248459959, "y": 331794.86554262874}, {"x": 2029.7638603696098, "y": 339510.6916768997}, {"x": 2029.8459958932237, "y": 347374.4199902225}, {"x": 2029.9281314168377, "y": 355388.2860206923}, {"x": 2030.0102669404519, "y": 363554.5501059566}, {"x": 2030.0924024640658, "y": 371875.49755937496}, {"x": 2030.1745379876797, "y": 380353.4388467326}, {"x": 2030.2566735112937, "y": 388990.7097635079}, {"x": 2030.3388090349076, "y": 397789.6716126923}, {"x": 2030.4209445585216, "y": 406752.71138316387}, {"x": 2030.5030800821355, "y": 415882.2419286121}, {"x": 2030.5852156057495, "y": 425180.7021470151}, {"x": 2030.6673511293634, "y": 434650.55716066813}];
         const initialTotalMw = 29718.734519744517;
         const startBlock = 499500;
-        const initialCurrentBlock = 917115;
+        const initialCurrentBlock = 917116;
 
         let currentShare = 10;
         let lastHeight = initialCurrentBlock;
