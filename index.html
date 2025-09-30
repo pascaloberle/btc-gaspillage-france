@@ -214,9 +214,9 @@
         }
 
         // Données embeddées initiales
-        const initialTotalEuros = 30776045788;
+        const initialTotalEuros = 30988465695;
         const initialBtc = 318470.625;
-        const initialPrice = 96637;
+        const initialPrice = 97304;
         const initialBlocks = 417606;
         const histData = [{"x": 2018.0, "y": 10000}, {"x": 2025.0, "y": 97000}];
         const initialTotalMw = 29718.734519744517;
@@ -349,8 +349,8 @@
             // Première mise à jour immédiate pour synchroniser
             setTimeout(updateData, 1000);
             
-            // Mises à jour toutes les 10 minutes
-            setInterval(updateData, 5000);
+            // Mises à jour toutes les minutes
+            setInterval(updateData, 60000);
         };
     </script>
 </body>
