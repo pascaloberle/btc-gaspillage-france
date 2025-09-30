@@ -239,7 +239,7 @@ def generate_html():
             <div class="additional-text">
                 <ul>
                     <li>Ce gaspillage n'inclut pas les potentiels retombées économiques de réindustrialiser la France avec une nouvelle industrie innovante.</li>
-                    <li>La création d'emplois dans des régions rurales et là où les containers de minage peuvent s'implémenter.</li>
+                    <li>La création d'emplois dans des régions rurales et là où les containers et les industriels du minage peuvent s'implémenter.</li>
                     <li>La potentielle mise en place de circularité en injectant une partie des profits dans les collectivités locales.</li>
                     <li><a href="https://cellulehumaine.substack.com/p/coming-soon">Bitcoin c'est de la science</a>, il serait temps de se remettre à la science.</li>
                 </ul>
