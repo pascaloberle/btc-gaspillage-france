@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Horloge du Bitcoin - France</title>
+    <title>Compteur Bitcoin France</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap');
@@ -37,6 +37,16 @@
             text-align: center;
         }
         p { color: #ccc; text-align: center; margin-bottom: 40px; }
+        .share-select { 
+            font-size: 1.2em; 
+            color: #F7931A; 
+            background: rgba(247, 147, 26, 0.1); 
+            border: 2px solid #F7931A; 
+            border-radius: 8px; 
+            padding: 10px; 
+            margin-bottom: 20px; 
+            text-align: center;
+        }
         .counter { 
             font-size: 2.5em; 
             font-weight: 700; 
@@ -85,38 +95,26 @@
             position: absolute; 
             left: 0; 
         }
-        a:link {
-            color: orange;
-            background-color: transparent;
-            text-decoration: none;
-        }
-
-        a:visited {
-        color: orange;
-        background-color: transparent;
-        text-decoration: none;
-        }
-
-        a:hover {
-        color: red;
-        background-color: transparent;
-        text-decoration: underline;
-        }
-
-        a:active {
-        color: orange;
-        background-color: transparent;
-        text-decoration: underline;
-        }
         .updating { color: #ccc; font-size: 0.9em; text-align: center; margin-top: 20px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="left">
-            <h1>Horloge du Bitcoin - France</h1>
-            <p>Coût d'opportunité si la France avait miné 10% de la puissance globale depuis 2018. Mises à jour en temps réel toutes les 10 minutes.</p>
+            <h1>Compteur Bitcoin France</h1>
+            <p>Coût d'opportunité si la France avait miné X% (sélectionnable ci-dessous) de la puissance globale depuis 2018. Mises à jour en temps réel toutes les 10 minutes.</p>
             
+            <select id="shareSelect" class="share-select">
+                <option value="1">1%</option>
+                <option value="2">2%</option>
+                <option value="5">5%</option>
+                <option value="10" selected>10%</option>
+                <option value="15">15%</option>
+            </select>
+            
+            <div class="label">MW/Jour Nécessaires</div>
+            <div class="counter" id="mwhCounter">0</div>
+
             <div class="label">Total Manqués (€)</div>
             <div class="counter" id="totalEurosCounter">0</div>
             
@@ -129,6 +127,8 @@
             <div class="label">Blocs Manqués</div>
             <div class="counter" id="blocksCounter">0</div>
             
+            
+            
             <div class="updating" id="updateText">Mise à jour en temps réel via API.</div>
         </div>
         
@@ -137,10 +137,12 @@
             <canvas id="powerLawChart"></canvas>
             <div class="additional-text">
                 <ul>
-                    <li>Ce gaspillage n'inclut pas les potentiels retombées économiques de réindustrialiser la France avec une nouvelle industrie innovante.</li>
-                    <li>La création d'emplois dans des régions rurales et là où les containers et les industriels du minage peuvent s'implémenter.</li>
+                    <li>Ce manque à gagner n'inclut pas les potentiels retombées économiques de réindustrialiser la France avec une nouvelle industrie novatrice.</li>
+                    <li>La création d'emplois dans des régions rurales et là où les containers de minage peuvent s'implémenter.</li>
                     <li>La potentielle mise en place de circularité en injectant une partie des profits dans les collectivités locales.</li>
-                    <li><a href="https://cellulehumaine.substack.com/p/coming-soon">Bitcoin c'est de la science</a>, il serait temps de se remettre à la science.</li>
+                    <li>Ce script calcule le potentiel manqué en milliards d'euros. Il suppose que la France aurait pu dédier une part fixe (1,2,5,10 ou 15%) de la puissance de hachage globale du Bitcoin depuis janvier 2018 (une hypothèse réaliste avec différents scénarios et basée sur une estimation d'électricité consommé globalement du Bitcoin ~500 TWh cumulés sur la période). Il fetch les données en temps réel (hauteur de bloc actuelle et prix du BTC en EUR) via des API gratuites. Le total est le nombre de BTC minés multiplié par le prix actuel, converti en milliards d'EUR.</li>
+                    <li>Récupération en temps réel : Toutes les 10 minutes (600 000 ms), le JS fetch les données via les API (hauteur de bloc via Blockstream et prix via CoinGecko). Les API sont gratuites et CORS-compatibles.</li>
+                    <li>Calculs dynamiques : J'ai intégré une fonction JS calculateMinedBtc qui miroite le calcul Python pour déterminer les BTC minés cumulés (en tenant compte des halvings). Le total gaspillage est recalculé comme (BTC # manqués totaux × prix actuel), et les compteurs s'animent vers les nouvelles valeurs.</li>
                 </ul>
             </div>
         </div>
@@ -188,7 +190,7 @@
                     current = target;
                     clearInterval(timer);
                 }
-                if (id === 'totalEurosCounter' || id === 'btcCounter' || id === 'blocksCounter') {
+                if (id === 'totalEurosCounter' || id === 'btcCounter' || id === 'blocksCounter' || id === 'mwhCounter') {
                     counter.textContent = Math.floor(current).toLocaleString() + suffix;
                 } else {
                     counter.textContent = current.toFixed(2).toLocaleString() + suffix;
@@ -196,18 +198,57 @@
             }, 16);
         }
 
-        // Données embeddées initiales
-        const initialTotalEuros = 31059638160;
-        const initialBtc = 318442.8125;
-        const initialPrice = 97536;
-        const initialBlocks = 417517;
-        const histData = [{"x": 2018.0, "y": 10000}, {"x": 2025.0, "y": 97000}];
-        const share = 0.1;
-        const startBlock = 499500;
-        const initialCurrentBlock = 917017;
+        // Fonction pour mettre à jour tous les compteurs avec le share actuel
+        function updateAllCounters(newHeight, newPrice, newBlocks, totalMw) {
+            const share = currentShare / 100;
+            const newTotalMined = calculateMinedBtc(newHeight);
+            const newTotalBtc = newTotalMined * share;
+            const newTotalEuros = Math.floor(newTotalBtc * newPrice);
+            const newMw = totalMw * share;
+            
+            animateCounter('totalEurosCounter', newTotalEuros, 1000, ' €');
+            animateCounter('btcCounter', newTotalBtc, 1000, ' BTC');
+            animateCounter('priceCounter', newPrice, 1000, ' €');
+            animateCounter('blocksCounter', newBlocks, 1000, '');
+            animateCounter('mwhCounter', newMw, 1000, ' MW');
+        }
 
+        // Données embeddées initiales
+        const initialTotalEuros = 30776045788;
+        const initialBtc = 318470.625;
+        const initialPrice = 96637;
+        const initialBlocks = 417606;
+        const histData = [{"x": 2018.0, "y": 10000}, {"x": 2025.0, "y": 97000}];
+        const initialTotalMw = 29718.734519744517;
+        const startBlock = 499500;
+        const initialCurrentBlock = 917106;
+
+        let currentShare = 10;
         let lastHeight = initialCurrentBlock;
         let lastPrice = initialPrice;
+        let lastTotalMw = initialTotalMw;
+
+        // Événement pour le dropdown
+        document.getElementById('shareSelect').onchange = function(e) {
+            currentShare = parseInt(e.target.value);
+            // Mise à jour immédiate avec les dernières données connues
+            if (lastHeight && lastPrice) {
+                fetch('https://api.blockchain.info/charts/hash-rate?format=json&cors=true')
+                .then(r => r.json())
+                .then(hashData => {
+                    const hr_ths = hashData.values[hashData.values.length - 1].y;
+                    const eff = 30; // J/TH moyenne
+                    const total_power_w = hr_ths * eff;
+                    const total_mw = total_power_w / 1000000;
+                    updateAllCounters(lastHeight, lastPrice, lastHeight - startBlock, total_mw);
+                    lastTotalMw = total_mw;
+                })
+                .catch(() => {
+                    // Fallback avec valeur initiale
+                    updateAllCounters(lastHeight, lastPrice, lastHeight - startBlock, initialTotalMw);
+                });
+            }
+        };
 
         // Fonction de mise à jour en temps réel
         async function updateData() {
@@ -220,39 +261,49 @@
                 const priceData = await priceRes.json();
                 const newPrice = priceData.bitcoin.eur;
                 
-                const newTotalMined = calculateMinedBtc(newHeight);
-                const newTotalBtc = newTotalMined * share;
-                const newTotalEuros = Math.floor(newTotalBtc * newPrice);
+                // Fetch hash rate pour MW
+                const hrRes = await fetch('https://api.blockchain.info/charts/hash-rate?format=json&cors=true');
+                const hashData = await hrRes.json();
+                const hr_ths = hashData.values[hashData.values.length - 1].y;
+                const eff = 30; // J/TH moyenne réseau
+                const total_power_w = hr_ths * eff;
+                const total_mw = total_power_w / 1000000;
+                
                 const newBlocks = newHeight - startBlock;
                 
-                // Animation vers les nouvelles valeurs
-                animateCounter('totalEurosCounter', newTotalEuros, 1000, ' €');
-                animateCounter('btcCounter', newTotalBtc, 1000, ' BTC');
-                animateCounter('priceCounter', newPrice, 1000, ' €');
-                animateCounter('blocksCounter', newBlocks, 1000, '');
+                // Mise à jour avec share actuel
+                updateAllCounters(newHeight, newPrice, newBlocks, total_mw);
                 
                 // Mise à jour du timestamp
                 document.getElementById('updateText').textContent = `Dernière mise à jour: ${new Date().toLocaleString('fr-FR')}`;
                 
                 lastHeight = newHeight;
                 lastPrice = newPrice;
+                lastTotalMw = total_mw;
             } catch (e) {
                 console.error('Erreur lors de la mise à jour:', e);
+                // Fallback
+                updateAllCounters(lastHeight, lastPrice, lastHeight - startBlock, lastTotalMw);
             }
         }
 
         // Initialisation
         window.onload = () => {
-            // Animation initiale
+            // Animation initiale avec share=10
+            const initialShare = 0.10;
+            const initialMw = initialTotalMw * initialShare;
+            
             document.getElementById('totalEurosCounter').textContent = '0';
             document.getElementById('btcCounter').textContent = '0';
             document.getElementById('priceCounter').textContent = '0';
             document.getElementById('blocksCounter').textContent = '0';
+            document.getElementById('mwhCounter').textContent = '0';
             
             animateCounter('totalEurosCounter', initialTotalEuros, 3000, ' €');
             animateCounter('btcCounter', initialBtc, 3000, ' BTC');
             animateCounter('priceCounter', initialPrice, 2000, ' €');
             animateCounter('blocksCounter', initialBlocks, 2000, '');
+            animateCounter('mwhCounter', initialMw, 2000, ' MW');
             
             // Graphique Chart.js (historique seulement)
             const ctx = document.getElementById('powerLawChart').getContext('2d');
@@ -299,7 +350,7 @@
             setTimeout(updateData, 1000);
             
             // Mises à jour toutes les 10 minutes
-            setInterval(updateData, 600000);
+            setInterval(updateData, 5000);
         };
     </script>
 </body>
