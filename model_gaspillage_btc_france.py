@@ -162,6 +162,52 @@ def generate_html():
             background: #000; 
             border-radius: 8px; 
             border: 1px solid #F7931A; 
+            margin-bottom: 20px;
+        }}
+        .additional-text {{ 
+            color: #ccc; 
+            font-size: 0.9em; 
+            text-align: left; 
+            line-height: 1.6;
+        }}
+        .additional-text ul {{ 
+            list-style-type: none; 
+            padding-left: 0; 
+        }}
+        .additional-text li {{ 
+            margin-bottom: 10px; 
+            padding-left: 20px; 
+            position: relative; 
+        }}
+        .additional-text li::before {{ 
+            content: "•"; 
+            color: #F7931A; 
+            font-weight: bold; 
+            position: absolute; 
+            left: 0; 
+        }}
+        a:link {{
+            color: orange;
+            background-color: transparent;
+            text-decoration: none;
+        }}
+
+        a:visited {{
+        color: orange;
+        background-color: transparent;
+        text-decoration: none;
+        }}
+
+        a:hover {{
+        color: red;
+        background-color: transparent;
+        text-decoration: underline;
+        }}
+
+        a:active {{
+        color: orange;
+        background-color: transparent;
+        text-decoration: underline;
         }}
         .updating {{ color: #ccc; font-size: 0.9em; text-align: center; margin-top: 20px; }}
     </style>
@@ -190,6 +236,14 @@ def generate_html():
         <div class="right">
             <h2>Prix Historique BTC (EUR)</h2>
             <canvas id="powerLawChart"></canvas>
+            <div class="additional-text">
+                <ul>
+                    <li>Ce gaspillage n'inclut pas les potentiels retombées économiques de réindustrialiser la France avec une nouvelle industrie innovante.</li>
+                    <li>La création d'emplois dans des régions rurales et là où les containers de minage peuvent s'implémenter.</li>
+                    <li>La potentielle mise en place de circularité en injectant une partie des profits dans les collectivités locales.</li>
+                    <li><a href="https://cellulehumaine.substack.com/p/coming-soon">Bitcoin c'est de la science</a>, il serait temps de se remettre à la science.</li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -356,7 +410,7 @@ def generate_html():
     with open('index.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
     
-    print("Fichier index.html généré ! Mises à jour en temps réel toutes les 10 minutes via API (prix et hauteur de bloc). La projection loi de puissance a été supprimée au profit des données réelles.")
+    print("Fichier index.html généré ! Texte additionnel ajouté sous le graphique dans la partie droite, avec puces en orange Bitcoin.")
 
 if __name__ == "__main__":
     generate_html()

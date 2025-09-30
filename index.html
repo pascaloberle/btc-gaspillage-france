@@ -61,6 +61,52 @@
             background: #000; 
             border-radius: 8px; 
             border: 1px solid #F7931A; 
+            margin-bottom: 20px;
+        }
+        .additional-text { 
+            color: #ccc; 
+            font-size: 0.9em; 
+            text-align: left; 
+            line-height: 1.6;
+        }
+        .additional-text ul { 
+            list-style-type: none; 
+            padding-left: 0; 
+        }
+        .additional-text li { 
+            margin-bottom: 10px; 
+            padding-left: 20px; 
+            position: relative; 
+        }
+        .additional-text li::before { 
+            content: "•"; 
+            color: #F7931A; 
+            font-weight: bold; 
+            position: absolute; 
+            left: 0; 
+        }
+        a:link {
+            color: orange;
+            background-color: transparent;
+            text-decoration: none;
+        }
+
+        a:visited {
+        color: orange;
+        background-color: transparent;
+        text-decoration: none;
+        }
+
+        a:hover {
+        color: red;
+        background-color: transparent;
+        text-decoration: underline;
+        }
+
+        a:active {
+        color: orange;
+        background-color: transparent;
+        text-decoration: underline;
         }
         .updating { color: #ccc; font-size: 0.9em; text-align: center; margin-top: 20px; }
     </style>
@@ -89,6 +135,14 @@
         <div class="right">
             <h2>Prix Historique BTC (EUR)</h2>
             <canvas id="powerLawChart"></canvas>
+            <div class="additional-text">
+                <ul>
+                    <li>Ce gaspillage n'inclut pas les potentiels retombées économiques de réindustrialiser la France avec une nouvelle industrie innovante.</li>
+                    <li>La création d'emplois dans des régions rurales et là où les containers de minage peuvent s'implémenter/</li>
+                    <li>La potentielle mise en place de circularité en injectant une partie des profits dans les collectivités locales.</li>
+                    <li><a href="https://cellulehumaine.substack.com/p/coming-soon">Bitcoin c'est de la science</a>, il serait temps de se remettre à la science.</li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -143,14 +197,14 @@
         }
 
         // Données embeddées initiales
-        const initialTotalEuros = 31064807805;
-        const initialBtc = 318440.3125;
-        const initialPrice = 97553;
-        const initialBlocks = 417509;
+        const initialTotalEuros = 31063655980;
+        const initialBtc = 318441.5625;
+        const initialPrice = 97549;
+        const initialBlocks = 417513;
         const histData = [{"x": 2018.0, "y": 10000}, {"x": 2025.0, "y": 97000}];
         const share = 0.1;
         const startBlock = 499500;
-        const initialCurrentBlock = 917009;
+        const initialCurrentBlock = 917013;
 
         let lastHeight = initialCurrentBlock;
         let lastPrice = initialPrice;
