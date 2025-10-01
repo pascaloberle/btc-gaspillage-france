@@ -47,6 +47,32 @@
             margin-bottom: 20px; 
             text-align: center;
         }
+        /* Style the button that is used to open and close the collapsible content */
+        .collapsible {
+        background-color: #000;
+        color: orange;
+        cursor: pointer;
+        padding: 25px;
+        width: 80%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+        }
+
+        /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+        .active, .collapsible:hover {
+        background-color: #000;
+        }
+
+        /* Style the collapsible content. Note: hidden by default */
+        .collapsible-content {
+        padding: 0 18px;
+        display: none;
+        overflow: hidden;
+        background-color: #000;
+        }
+
         .counter { 
             font-size: 2.5em; 
             font-weight: 700; 
@@ -165,18 +191,38 @@
                     <li>La potentielle mise en place de circularité en injectant une partie des profits dans les collectivités locales.</li>
                     <li>Pour maximiser l'utilité du minage de Bitcoin dans la société : les profits du minage pourraient servir au bien-être des populations, au développement des énergies renouvelables, à l'agroécologie et à aider à la transition bas-carbone des pays du Sud par exemple.</li>
                     <li><a href="https://x.com/i/grok/share/vxt7T2ufIWKKPaWyWEj0I5Mtl" target="_blank">Le Bitcoin peut devenir un grand allié pour accélérer la transition énergétique</a>. Mais il faut interdire l’utilisation de combustible fossile dans le minage Bitcoin sous peine de lourdes sanctions et réguler le minage pour que l'usage n'empiète pas sur la consommation d'électricité courante (optimisation sous contraintes).</li>
-                    <li>Ce script calcule le potentiel manqué en milliards d'euros. Il suppose que la France aurait pu dédier une part fixe (1,2,5,10 ou 15%) de la puissance de hachage globale du Bitcoin depuis janvier 2018 (une hypothèse réaliste avec différents scénarios et basée sur une estimation d'électricité consommé globalement du Bitcoin ~500 TWh cumulés sur la période). Il fetch les données en temps réel (hauteur de bloc actuelle et prix du BTC en EUR) via des API gratuites. Le total est le nombre de BTC minés multiplié par le prix actuel, converti en milliards d'EUR.</li>
-                    <li>Récupération en temps réel : Toutes les 10 minutes (600 000 ms), le JS fetch les données via les API (hauteur de bloc via Blockstream et prix via CoinGecko). Les API sont gratuites et CORS-compatibles.</li>
-                    <li>Calculs dynamiques : J'ai intégré une fonction JS calculateMinedBtc qui miroite le calcul Python pour déterminer les BTC minés cumulés (en tenant compte des halvings). Le total gaspillage est recalculé comme (BTC # manqués totaux × prix actuel), et les compteurs s'animent vers les nouvelles valeurs.</li>
-                    <li><a href="https://colab.research.google.com/drive/1OC5ePgAxMX47JP14uQVTpBktjd2kZq6u?usp=sharing" target="_blank">Ceci est une simulation</a> qui peut donner une idée de "l'ordre de grandeur" total sans pour autant prendre en compte CAPEX et autres considérations techniques et implémentations fines.</li>
                     <li><a href="https://b1m.io/" target="_blank">Bitcoin suit une loi de puissance</a> et le rendement futur pourrait être projeté avec un écart type d'erreur.</li>
                     <li>En apprendre plus sur Bitcoin avec <a href="https://tinyurl.com/viebitcoin" target="_blank">un article scientifique qui lui est dédié</a>.</li>
                 </ul>
+                <br />
+                <button type="button" class="collapsible">Cliquez ici pour plus d'explications techniques sur le script.</button>
+                <div class="collapsible-content">
+                    <ul>
+                        <li>Ce script calcule le potentiel manqué en milliards d'euros à miner Bitcoin depuis le 1er Janvier 2018. Il suppose que la France aurait pu dédier une part fixe (1,2,5,10 ou 15%) de la puissance de hachage globale du réseau Bitcoin depuis janvier 2018 (une hypothèse réaliste avec différents scénarios et basée sur une estimation d'électricité consommé globalement du Bitcoin ~500 TWh cumulés sur la période). Il fetch les données en temps réel (hauteur de bloc actuelle et prix du BTC en EUR) via des API gratuites. Le total est le nombre de BTC minés multiplié par le prix actuel, converti en milliards d'EUR.</li>
+                        <li>Récupération en temps réel : Toutes les 10 minutes (600 000 ms), le JS fetch les données via les API (hauteur de bloc via Blockstream et prix via CoinGecko). Les API sont gratuites et CORS-compatibles.</li>
+                        <li>Calculs dynamiques : J'ai intégré une fonction JS calculateMinedBtc qui miroite le calcul Python pour déterminer les BTC minés cumulés (en tenant compte des halvings). Le total gaspillage est recalculé comme (BTC # manqués totaux × prix actuel), et les compteurs s'animent vers les nouvelles valeurs.</li>  
+                        <li>Ceci est une simulation, <a href="https://colab.research.google.com/drive/1OC5ePgAxMX47JP14uQVTpBktjd2kZq6u?usp=sharing" target="_blank">j'ouvre le code source pour rendre la logique transparente</a>. Cette simulation peut donner une idée de "l'ordre de grandeur" et un rendement total brut sans pour autant prendre en compte CAPEX et autres considérations techniques et implémentations fines.</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+            content.style.display = "none";
+            } else {
+            content.style.display = "block";
+            }
+        });
+        }
         // Fonction pour calculer les BTC minés (miroir du Python)
         function calculateMinedBtc(currentBlock) {
             let totalBtc = 0.0;
@@ -242,15 +288,15 @@
         }
 
         // Données embeddées initiales
-        const initialTotalEuros = 31033014620;
-        const initialBtc = 318493.125;
-        const initialPrice = 97437;
-        const initialBlocks = 417678;
+        const initialTotalEuros = 31925776640;
+        const initialBtc = 318515.625;
+        const initialPrice = 100233;
+        const initialBlocks = 417750;
         const histData = [{"x": 2018.0, "y": 10000}, {"x": 2025.0, "y": 97000}];
-        const powerData = [{"x": 2025.7419575633128, "y": 97437.0}, {"x": 2025.8240930869267, "y": 100242.38105103855}, {"x": 2025.9062286105407, "y": 103114.278468585}, {"x": 2025.9883641341546, "y": 106053.93468714146}, {"x": 2026.0704996577686, "y": 109062.60915767313}, {"x": 2026.1526351813827, "y": 112141.5784967045}, {"x": 2026.2347707049967, "y": 115292.13663599311}, {"x": 2026.3169062286106, "y": 118515.5949727808}, {"x": 2026.3990417522245, "y": 121813.28252062148}, {"x": 2026.4811772758385, "y": 125186.546060785}, {"x": 2026.5633127994524, "y": 128636.7502942369}, {"x": 2026.6454483230664, "y": 132165.2779941928}, {"x": 2026.7275838466803, "y": 135773.53015924757}, {"x": 2026.8097193702943, "y": 139462.9261670785}, {"x": 2026.8918548939082, "y": 143234.9039287216}, {"x": 2026.9739904175221, "y": 147090.92004342112}, {"x": 2027.0561259411363, "y": 151032.4499540514}, {"x": 2027.1382614647503, "y": 155060.98810311023}, {"x": 2027.2203969883642, "y": 159178.048089284}, {"x": 2027.3025325119781, "y": 163385.16282458333}, {"x": 2027.384668035592, "y": 167683.88469204906}, {"x": 2027.466803559206, "y": 172075.78570402807}, {"x": 2027.54893908282, "y": 176562.45766101833}, {"x": 2027.631074606434, "y": 181145.5123110826}, {"x": 2027.7132101300479, "y": 185826.58150983037}, {"x": 2027.7953456536618, "y": 190607.31738096784}, {"x": 2027.8774811772757, "y": 195489.39247741463}, {"x": 2027.95961670089, "y": 200474.49994298766}, {"x": 2028.0417522245039, "y": 205564.353674651}, {"x": 2028.1238877481178, "y": 210760.6884853315}, {"x": 2028.2060232717317, "y": 216065.26026729998}, {"x": 2028.2881587953457, "y": 221479.8461561165}, {"x": 2028.3702943189596, "y": 227006.2446951407}, {"x": 2028.4524298425736, "y": 232646.27600060552}, {"x": 2028.5345653661875, "y": 238401.78192725405}, {"x": 2028.6167008898015, "y": 244274.62623453964}, {"x": 2028.6988364134154, "y": 250266.6947533882}, {"x": 2028.7809719370293, "y": 256379.89555352222}, {"x": 2028.8631074606435, "y": 262616.1591113464}, {"x": 2028.9452429842574, "y": 268977.4384783942}, {"x": 2029.0273785078714, "y": 275465.70945033466}, {"x": 2029.1095140314853, "y": 282082.9707365398}, {"x": 2029.1916495550993, "y": 288831.24413021066}, {"x": 2029.2737850787132, "y": 295712.57467906346}, {"x": 2029.3559206023272, "y": 302729.0308565733}, {"x": 2029.438056125941, "y": 309882.7047337773}, {"x": 2029.520191649555, "y": 317175.71215163416}, {"x": 2029.602327173169, "y": 324610.192893942}, {"x": 2029.684462696783, "y": 332188.31086081255}, {"x": 2029.766598220397, "y": 339912.25424270175}, {"x": 2029.848733744011, "y": 347784.23569499643}, {"x": 2029.930869267625, "y": 355806.49251315644}, {"x": 2030.013004791239, "y": 363981.2868084117}, {"x": 2030.0951403148529, "y": 372310.90568401397}, {"x": 2030.1772758384668, "y": 380797.6614120428}, {"x": 2030.2594113620808, "y": 389443.8916107654}, {"x": 2030.3415468856947, "y": 398251.9594225494}, {"x": 2030.4236824093086, "y": 407224.25369232876}, {"x": 2030.5058179329226, "y": 416363.18914662226}, {"x": 2030.5879534565365, "y": 425671.20657310373}, {"x": 2030.6700889801505, "y": 435150.7730007242}];
+        const powerData = [{"x": 2025.7419575633128, "y": 100233.0}, {"x": 2025.8240930869267, "y": 103118.88276413217}, {"x": 2025.9062286105407, "y": 106073.19061282348}, {"x": 2025.9883641341546, "y": 109097.20163281146}, {"x": 2026.0704996577686, "y": 112192.21141559213}, {"x": 2026.1526351813827, "y": 115359.53321079449}, {"x": 2026.2347707049967, "y": 118600.49808014919}, {"x": 2026.3169062286106, "y": 121916.45505205146}, {"x": 2026.3990417522245, "y": 125308.77127671678}, {"x": 2026.4811772758385, "y": 128778.83218192948}, {"x": 2026.5633127994524, "y": 132328.04162938357}, {"x": 2026.6454483230664, "y": 135957.82207161473}, {"x": 2026.7275838466803, "y": 139669.6147095237}, {"x": 2026.8097193702943, "y": 143464.87965048983}, {"x": 2026.8918548939082, "y": 147345.09606707463}, {"x": 2026.9739904175221, "y": 151311.76235631463}, {"x": 2027.0561259411363, "y": 155366.39629960316}, {"x": 2027.1382614647503, "y": 159510.53522316008}, {"x": 2027.2203969883642, "y": 163745.7361590895}, {"x": 2027.3025325119781, "y": 168073.57600702462}, {"x": 2027.384668035592, "y": 172495.65169635921}, {"x": 2027.466803559206, "y": 177013.58034906499}, {"x": 2027.54893908282, "y": 181628.99944309503}, {"x": 2027.631074606434, "y": 186343.56697637183}, {"x": 2027.7132101300479, "y": 191158.96163136003}, {"x": 2027.7953456536618, "y": 196076.8829402234}, {"x": 2027.8774811772757, "y": 201099.051450565}, {"x": 2027.95961670089, "y": 206227.2088917504}, {"x": 2028.0417522245039, "y": 211463.11834181362}, {"x": 2028.1238877481178, "y": 216808.56439494475}, {"x": 2028.2060232717317, "y": 222265.35332955938}, {"x": 2028.2881587953457, "y": 227835.3132769484}, {"x": 2028.3702943189596, "y": 233520.2943905091}, {"x": 2028.4524298425736, "y": 239322.1690155556}, {"x": 2028.5345653661875, "y": 245242.83185970888}, {"x": 2028.6167008898015, "y": 251284.200163866}, {"x": 2028.6988364134154, "y": 257448.21387374777}, {"x": 2028.7809719370293, "y": 263736.8358120241}, {"x": 2028.8631074606435, "y": 270152.0518510174}, {"x": 2028.9452429842574, "y": 276695.87108598254}, {"x": 2029.0273785078714, "y": 283370.32600896363}, {"x": 2029.1095140314853, "y": 290177.47268322704}, {"x": 2029.1916495550993, "y": 297119.3909182693}, {"x": 2029.2737850787132, "y": 304198.1844454013}, {"x": 2029.3559206023272, "y": 311415.981093906}, {"x": 2029.438056125941, "y": 318774.93296777096}, {"x": 2029.520191649555, "y": 326277.2166229948}, {"x": 2029.602327173169, "y": 333925.0332454662}, {"x": 2029.684462696783, "y": 341720.60882941616}, {"x": 2029.766598220397, "y": 349666.19435644284}, {"x": 2029.848733744011, "y": 357764.0659751078}, {"x": 2029.930869267625, "y": 366016.5251811038}, {"x": 2030.013004791239, "y": 374425.89899799385}, {"x": 2030.0951403148529, "y": 382994.54015852057}, {"x": 2030.1772758384668, "y": 391724.82728648547}, {"x": 2030.2594113620808, "y": 400619.1650791983}, {"x": 2030.3415468856947, "y": 409679.9844904953}, {"x": 2030.4236824093086, "y": 418909.7429143261}, {"x": 2030.5058179329226, "y": 428310.92436890904}, {"x": 2030.5879534565365, "y": 437886.0396814547}, {"x": 2030.6700889801505, "y": 447637.6266734566}];
         const initialTotalMw = 29718.734519744517;
         const startBlock = 499500;
-        const initialCurrentBlock = 917178;
+        const initialCurrentBlock = 917250;
 
         let currentShare = 10;
         let lastHeight = initialCurrentBlock;
