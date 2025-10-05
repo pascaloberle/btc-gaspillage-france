@@ -21,8 +21,26 @@ def get_btc_price_eur():
         print(f"Erreur lors de la récupération du prix : {e}")
         return 97304  # Fallback pour 29/09/2025
 
+def get_current_hash_rate_ths():
+    """Récupère le hash rate actuel en TH/s via Blockchain.info API."""
+    try:
+        response = requests.get("https://api.blockchain.info/charts/hash-rate?format=json")
+        data = response.json()
+        hr_ths = data['values'][-1]['y']
+        return hr_ths
+    except Exception as e:
+        print(f"Erreur lors de la récupération du hash rate : {e}")
+        return 600000000  # Fallback approx 600 EH/s = 6e8 TH/s
+
+def days_since_genesis(current_date=None):
+    """Calcule les jours depuis la genèse (03/01/2009)."""
+    genesis = date(2009, 1, 3)
+    if current_date is None:
+        current_date = date.today()
+    return (current_date - genesis).days
+
 def get_historical_prices(current_date):
-    """Récupère les prix historiques BTC en EUR depuis 2018, échantillonné tous les 30 jours."""
+    """Récupère les prix historiques BTC en EUR depuis 2018, échantillonné tous les 7 jours pour hebdomadaire."""
     from_ts = 1514764800  # 2018-01-01
     to_ts = int(time.mktime(current_date.timetuple()))
     try:
@@ -30,7 +48,7 @@ def get_historical_prices(current_date):
         response = requests.get(url)
         data = response.json()['prices']
         points = []
-        for i in range(0, len(data), 30):  # Échantillon tous les 30 jours
+        for i in range(0, len(data), 7):  # Échantillon tous les 7 jours pour hebdomadaire
             ts_ms, p = data[i]
             dt = datetime.fromtimestamp(ts_ms / 1000).date()
             fractional_year = dt.year + ((dt.timetuple().tm_yday - 1) / 365.25)
@@ -39,6 +57,20 @@ def get_historical_prices(current_date):
     except Exception as e:
         print(f"Erreur hist: {e}")
         return [{'x': 2018.0, 'y': 10000}, {'x': 2025.0, 'y': 97000}]  # Dummy fallback
+
+def get_power_law_points(current_date, exponent=5.8, years_ahead=5):
+    """Génère des points pour la courbe de loi de puissance."""
+    current_days = days_since_genesis(current_date)
+    price_eur = get_btc_price_eur()
+    A = price_eur / (current_days ** exponent)
+    
+    points = []
+    for i in range(0, (years_ahead * 365) + 1, 30):  # Tous les 30 jours pour lisser
+        day = current_days + i
+        year = 2009 + (day / 365.25)
+        price = A * (day ** exponent)
+        points.append({'x': year, 'y': price})
+    return points, A, exponent
 
 def calculate_mined_btc(start_block, current_block):
     """Calcule le total de BTC minés depuis le bloc de départ jusqu'au bloc actuel."""
@@ -71,7 +103,7 @@ def calculate_opportunity_cost(share=0.10):  # 10% de part hypothétique
     start_block = 499500  # Hauteur approximative au 1er janvier 2018
     current_block = get_current_block_height()
     price_eur = get_btc_price_eur()
-    current_date = date(2025, 9, 29)  # Date fixe pour cohérence avec le contexte
+    current_date = date.today()
     
     total_mined_btc = calculate_mined_btc(start_block, current_block)
     france_btc_past = total_mined_btc * share
@@ -83,6 +115,15 @@ def calculate_opportunity_cost(share=0.10):  # 10% de part hypothétique
     
     initial_blocks = current_block - start_block
     
+    # Calcul initial MW/jour total réseau (puissance moyenne)
+    hr_ths = get_current_hash_rate_ths()
+    eff = 30  # J/TH moyenne
+    total_power_w = hr_ths * eff
+    total_mw = total_power_w / 1_000_000
+    
+    # Points pour loi de puissance
+    power_points, A, exponent = get_power_law_points(current_date)
+    
     return {
         'france_btc_past': france_btc_past,
         'total_euros_past': total_euros_past,
@@ -92,7 +133,11 @@ def calculate_opportunity_cost(share=0.10):  # 10% de part hypothétique
         'initial_blocks': initial_blocks,
         'start_block': start_block,
         'initial_current_block': current_block,
-        'total_mined_btc': total_mined_btc
+        'total_mined_btc': total_mined_btc,
+        'initial_total_mw': total_mw,
+        'power_points': power_points,
+        'A': A,
+        'exponent': exponent
     }
 
 def generate_html():
@@ -105,7 +150,7 @@ def generate_html():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Horloge du Gaspillage Bitcoin - France</title>
+    <title>Compteur Bitcoin France</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap');
@@ -138,6 +183,42 @@ def generate_html():
             text-align: center;
         }}
         p {{ color: #ccc; text-align: center; margin-bottom: 40px; }}
+        .share-select {{ 
+            font-size: 1.2em; 
+            color: #F7931A; 
+            background: rgba(247, 147, 26, 0.1); 
+            border: 2px solid #F7931A; 
+            border-radius: 8px; 
+            padding: 10px; 
+            margin-bottom: 20px; 
+            text-align: center;
+        }}
+        /* Style the button that is used to open and close the collapsible content */
+        .collapsible {{
+        background-color: #000;
+        color: orange;
+        cursor: pointer;
+        padding: 25px;
+        width: 80%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+        }}
+
+        /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+        .active, .collapsible:hover {{
+        background-color: #000;
+        }}
+
+        /* Style the collapsible content. Note: hidden by default */
+        .collapsible-content {{
+        padding: 0 18px;
+        display: none;
+        overflow: hidden;
+        background-color: #000;
+        }}
+
         .counter {{ 
             font-size: 2.5em; 
             font-weight: 700; 
@@ -187,9 +268,9 @@ def generate_html():
             left: 0; 
         }}
         a:link {{
-            color: orange;
-            background-color: transparent;
-            text-decoration: none;
+        color: orange;
+        background-color: transparent;
+        text-decoration: none;
         }}
 
         a:visited {{
@@ -215,10 +296,21 @@ def generate_html():
 <body>
     <div class="container">
         <div class="left">
-            <h1>Horloge du Gaspillage Bitcoin - France</h1>
-            <p>Coût d'opportunité si la France avait miné 10% de la puissance globale depuis 2018. Mises à jour en temps réel toutes les 10 minutes.</p>
+            <h1>Compteur Bitcoin France</h1>
+            <p>Coût d'opportunité si la France avait miné X% (sélectionnable ci-dessous) de la puissance globale de hachage du réseau Bitcoin depuis 2018. Mises à jour en temps réel toutes les 10 minutes.</p>
             
-            <div class="label">Total Gaspillage (€)</div>
+            <select id="shareSelect" class="share-select">
+                <option value="1">1%</option>
+                <option value="2">2%</option>
+                <option value="5">5%</option>
+                <option value="10" selected>10%</option>
+                <option value="15">15%</option>
+            </select>
+            
+            <div class="label">MW/Jour Nécessaires</div>
+            <div class="counter" id="mwhCounter">0</div>
+
+            <div class="label">Total Manqués (€)</div>
             <div class="counter" id="totalEurosCounter">0</div>
             
             <div class="label">BTC Manqués</div>
@@ -230,24 +322,53 @@ def generate_html():
             <div class="label">Blocs Manqués</div>
             <div class="counter" id="blocksCounter">0</div>
             
-            <div class="updating" id="updateText">Mise à jour en temps réel via API.</div>
+            
+            
+            <div class="updating" id="updateText">Mise à jour en temps réel.</div>
         </div>
         
         <div class="right">
-            <h2>Prix Historique BTC (EUR)</h2>
+            <h2>Prix Historique BTC (EUR) & Loi de Puissance (exposant 5.8)</h2>
             <canvas id="powerLawChart"></canvas>
             <div class="additional-text">
                 <ul>
-                    <li>Ce gaspillage n'inclut pas les potentiels retombées économiques de réindustrialiser la France avec une nouvelle industrie innovante.</li>
-                    <li>La création d'emplois dans des régions rurales et là où les containers et les industriels du minage peuvent s'implémenter.</li>
+                    <li>Ce manque à gagner n'inclut pas les potentielles retombées économiques de réindustrialiser la France avec une nouvelle industrie novatrice.</li>
+                    <li>La création d'emplois dans des régions rurales et là où les containers de minage peuvent s'implémenter.</li>
                     <li>La potentielle mise en place de circularité en injectant une partie des profits dans les collectivités locales.</li>
-                    <li><a href="https://cellulehumaine.substack.com/p/coming-soon">Bitcoin c'est de la science</a>, il serait temps de se remettre à la science.</li>
+                    <li>Pour maximiser l'utilité du minage de Bitcoin dans la société : les profits du minage pourraient servir au bien-être des populations, au développement des énergies renouvelables, à l'agroécologie et à aider à la transition bas-carbone des pays du Sud par exemple.</li>
+                    <li><a href="https://x.com/i/grok/share/vxt7T2ufIWKKPaWyWEj0I5Mtl" target="_blank">Le Bitcoin peut devenir un grand allié pour accélérer la transition énergétique</a>. Mais il faut interdire l’utilisation de combustible fossile dans le minage Bitcoin sous peine de lourdes sanctions et réguler le minage pour que l'usage n'empiète pas sur la consommation d'électricité courante (optimisation sous contraintes).</li>
+                    <li><a href="https://b1m.io/" target="_blank">Bitcoin suit une loi de puissance</a> et le rendement futur pourrait être projeté avec un écart type d'erreur.</li>
+                    <li>En apprendre plus sur Bitcoin avec <a href="https://tinyurl.com/viebitcoin" target="_blank">un article scientifique qui lui est dédié</a>.</li>
                 </ul>
+                <br />
+                <button type="button" class="collapsible">Cliquez ici pour plus d'explications techniques sur le script.</button>
+                <div class="collapsible-content">
+                    <ul>
+                        <li>Ce script calcule le potentiel manqué en milliards d'euros à miner Bitcoin depuis le 1er Janvier 2018. Il suppose que la France aurait pu dédier une part fixe (1,2,5,10 ou 15%) de la puissance de hachage globale du réseau Bitcoin depuis janvier 2018 (une hypothèse réaliste avec différents scénarios et basée sur une estimation d'électricité consommé globalement du Bitcoin ~500 TWh cumulés sur la période). Il fetch les données en temps réel (hauteur de bloc actuelle et prix du BTC en EUR) via des API gratuites. Le total est le nombre de BTC minés multiplié par le prix actuel, converti en milliards d'EUR.</li>
+                        <li>Récupération en temps réel : Toutes les 10 minutes (600 000 ms), le JS fetch les données via les API (hauteur de bloc via Blockstream et prix via CoinGecko). Les API sont gratuites et CORS-compatibles.</li>
+                        <li>Calculs dynamiques : J'ai intégré une fonction JS calculateMinedBtc qui miroite le calcul Python pour déterminer les BTC minés cumulés (en tenant compte des halvings). Le total gaspillage est recalculé comme (BTC # manqués totaux × prix actuel), et les compteurs s'animent vers les nouvelles valeurs.</li>  
+                        <li>Ceci est une simulation, <a href="https://colab.research.google.com/drive/1OC5ePgAxMX47JP14uQVTpBktjd2kZq6u?usp=sharing" target="_blank">j'ouvre le code source pour rendre la logique transparente</a>. Cette simulation peut donner une idée de "l'ordre de grandeur" et un rendement total brut sans pour autant prendre en compte CAPEX et autres considérations techniques et implémentations fines.</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {{
+        coll[i].addEventListener("click", function() {{
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {{
+            content.style.display = "none";
+            }} else {{
+            content.style.display = "block";
+            }}
+        }});
+        }}
         // Fonction pour calculer les BTC minés (miroir du Python)
         function calculateMinedBtc(currentBlock) {{
             let totalBtc = 0.0;
@@ -289,12 +410,27 @@ def generate_html():
                     current = target;
                     clearInterval(timer);
                 }}
-                if (id === 'totalEurosCounter' || id === 'btcCounter' || id === 'blocksCounter') {{
+                if (id === 'totalEurosCounter' || id === 'btcCounter' || id === 'blocksCounter' || id === 'mwhCounter') {{
                     counter.textContent = Math.floor(current).toLocaleString() + suffix;
                 }} else {{
                     counter.textContent = current.toFixed(2).toLocaleString() + suffix;
                 }}
             }}, 16);
+        }}
+
+        // Fonction pour mettre à jour tous les compteurs avec le share actuel
+        function updateAllCounters(newHeight, newPrice, newBlocks, totalMw) {{
+            const share = currentShare / 100;
+            const newTotalMined = calculateMinedBtc(newHeight);
+            const newTotalBtc = newTotalMined * share;
+            const newTotalEuros = Math.floor(newTotalBtc * newPrice);
+            const newMw = totalMw * share;
+            
+            animateCounter('totalEurosCounter', newTotalEuros, 1000, ' €');
+            animateCounter('btcCounter', newTotalBtc, 1000, ' BTC');
+            animateCounter('priceCounter', newPrice, 1000, ' €');
+            animateCounter('blocksCounter', newBlocks, 1000, '');
+            animateCounter('mwhCounter', newMw, 1000, ' MW');
         }}
 
         // Données embeddées initiales
@@ -303,12 +439,37 @@ def generate_html():
         const initialPrice = {result['price_eur']};
         const initialBlocks = {result['initial_blocks']};
         const histData = {json.dumps(result['hist_points'])};
-        const share = {result['share']};
+        const powerData = {json.dumps(result['power_points'])};
+        const initialTotalMw = {result['initial_total_mw']};
         const startBlock = {result['start_block']};
         const initialCurrentBlock = {result['initial_current_block']};
 
+        let currentShare = 10;
         let lastHeight = initialCurrentBlock;
         let lastPrice = initialPrice;
+        let lastTotalMw = initialTotalMw;
+
+        // Événement pour le dropdown
+        document.getElementById('shareSelect').onchange = function(e) {{
+            currentShare = parseInt(e.target.value);
+            // Mise à jour immédiate avec les dernières données connues
+            if (lastHeight && lastPrice) {{
+                fetch('https://api.blockchain.info/charts/hash-rate?format=json&cors=true')
+                .then(r => r.json())
+                .then(hashData => {{
+                    const hr_ths = hashData.values[hashData.values.length - 1].y;
+                    const eff = 30; // J/TH moyenne
+                    const total_power_w = hr_ths * eff;
+                    const total_mw = total_power_w / 1000000;
+                    updateAllCounters(lastHeight, lastPrice, lastHeight - startBlock, total_mw);
+                    lastTotalMw = total_mw;
+                }})
+                .catch(() => {{
+                    // Fallback avec valeur initiale
+                    updateAllCounters(lastHeight, lastPrice, lastHeight - startBlock, initialTotalMw);
+                }});
+            }}
+        }};
 
         // Fonction de mise à jour en temps réel
         async function updateData() {{
@@ -321,41 +482,51 @@ def generate_html():
                 const priceData = await priceRes.json();
                 const newPrice = priceData.bitcoin.eur;
                 
-                const newTotalMined = calculateMinedBtc(newHeight);
-                const newTotalBtc = newTotalMined * share;
-                const newTotalEuros = Math.floor(newTotalBtc * newPrice);
+                // Fetch hash rate pour MW
+                const hrRes = await fetch('https://api.blockchain.info/charts/hash-rate?format=json&cors=true');
+                const hashData = await hrRes.json();
+                const hr_ths = hashData.values[hashData.values.length - 1].y;
+                const eff = 30; // J/TH moyenne réseau
+                const total_power_w = hr_ths * eff;
+                const total_mw = total_power_w / 1000000;
+                
                 const newBlocks = newHeight - startBlock;
                 
-                // Animation vers les nouvelles valeurs
-                animateCounter('totalEurosCounter', newTotalEuros, 1000, ' €');
-                animateCounter('btcCounter', newTotalBtc, 1000, ' BTC');
-                animateCounter('priceCounter', newPrice, 1000, ' €');
-                animateCounter('blocksCounter', newBlocks, 1000, '');
+                // Mise à jour avec share actuel
+                updateAllCounters(newHeight, newPrice, newBlocks, total_mw);
                 
                 // Mise à jour du timestamp
                 document.getElementById('updateText').textContent = `Dernière mise à jour: ${{new Date().toLocaleString('fr-FR')}}`;
                 
                 lastHeight = newHeight;
                 lastPrice = newPrice;
+                lastTotalMw = total_mw;
             }} catch (e) {{
                 console.error('Erreur lors de la mise à jour:', e);
+                // Fallback
+                updateAllCounters(lastHeight, lastPrice, lastHeight - startBlock, lastTotalMw);
             }}
         }}
 
         // Initialisation
         window.onload = () => {{
-            // Animation initiale
+            // Animation initiale avec share=10
+            const initialShare = 0.10;
+            const initialMw = initialTotalMw * initialShare;
+            
             document.getElementById('totalEurosCounter').textContent = '0';
             document.getElementById('btcCounter').textContent = '0';
             document.getElementById('priceCounter').textContent = '0';
             document.getElementById('blocksCounter').textContent = '0';
+            document.getElementById('mwhCounter').textContent = '0';
             
             animateCounter('totalEurosCounter', initialTotalEuros, 3000, ' €');
             animateCounter('btcCounter', initialBtc, 3000, ' BTC');
             animateCounter('priceCounter', initialPrice, 2000, ' €');
             animateCounter('blocksCounter', initialBlocks, 2000, '');
+            animateCounter('mwhCounter', initialMw, 2000, ' MW');
             
-            // Graphique Chart.js (historique seulement)
+            // Graphique Chart.js avec historique et loi de puissance
             const ctx = document.getElementById('powerLawChart').getContext('2d');
             new Chart(ctx, {{
                 type: 'line',
@@ -369,6 +540,16 @@ def generate_html():
                             tension: 0.1,
                             pointRadius: 0,
                             fill: false
+                        }},
+                        {{
+                            label: 'Loi de Puissance (exposant 5.8)',
+                            data: powerData,
+                            borderColor: '#FF6B35',
+                            backgroundColor: 'transparent',
+                            tension: 0.1,
+                            pointRadius: 0,
+                            fill: false,
+                            borderDash: [5, 5]
                         }}
                     ]
                 }},
@@ -399,7 +580,7 @@ def generate_html():
             // Première mise à jour immédiate pour synchroniser
             setTimeout(updateData, 1000);
             
-            // Mises à jour toutes les 10 minutes
+            // Mises à jour toutes les minutes
             setInterval(updateData, 600000);
         }};
     </script>
@@ -410,7 +591,7 @@ def generate_html():
     with open('index.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
     
-    print("Fichier index.html généré ! Texte additionnel ajouté sous le graphique dans la partie droite, avec puces en orange Bitcoin.")
+    print("Fichier index.html généré ! Graphique modifié : Ajout d'une courbe de loi de puissance (exposant 5.8) en pointillé orange clair, projetée sur 5 ans. Historique conservé en continu. Titre du graphique mis à jour.")
 
 if __name__ == "__main__":
     generate_html()
