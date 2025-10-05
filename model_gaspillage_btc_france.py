@@ -98,7 +98,7 @@ def calculate_mined_btc(start_block, current_block):
     
     return total_btc
 
-def calculate_opportunity_cost(share=0.02):  # 10% de part hypothétique
+def calculate_opportunity_cost(share=0.02):  # 2% de part hypothétique
     """Calcule le coût d'opportunité, plus données pour graphique."""
     start_block = 499500  # Hauteur approximative au 1er janvier 2018
     current_block = get_current_block_height()
