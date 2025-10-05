@@ -155,7 +155,8 @@
             
             <select id="shareSelect" class="share-select">
                 <option value="1">1%</option>
-                <option value="2" selected>2%</option>
+                <option value="2">2%</option>
+                <option value="3" selected>3%</option>
                 <option value="5">5%</option>
                 <option value="10">10%</option>
                 <option value="15">15%</option>
@@ -198,7 +199,7 @@
                 <button type="button" class="collapsible">Cliquez ici pour plus d'explications techniques sur le script.</button>
                 <div class="collapsible-content">
                     <ul>
-                        <li>Ce script calcule le potentiel manqué en milliards d'euros à miner Bitcoin depuis le 1er Janvier 2018. Il suppose que la France aurait pu dédier une part fixe (1,2,5,10 ou 15%) de la puissance de hachage globale du réseau Bitcoin depuis janvier 2018 (une hypothèse réaliste avec différents scénarios et basée sur une estimation d'électricité consommé globalement du Bitcoin ~500 TWh cumulés sur la période). Il fetch les données en temps réel (hauteur de bloc actuelle et prix du BTC en EUR) via des API gratuites. Le total est le nombre de BTC minés multiplié par le prix actuel, converti en milliards d'EUR.</li>
+                        <li>Ce script calcule le potentiel manqué en milliards d'euros à miner Bitcoin depuis le 1er Janvier 2018. Il suppose que la France aurait pu dédier une part fixe (1,2,3,5,10 ou 15%) de la puissance de hachage globale du réseau Bitcoin depuis janvier 2018 (une hypothèse réaliste avec différents scénarios et basée sur une estimation d'électricité consommé globalement du Bitcoin ~500 TWh cumulés sur la période). Il fetch les données en temps réel (hauteur de bloc actuelle et prix du BTC en EUR) via des API gratuites. Le total est le nombre de BTC minés multiplié par le prix actuel, converti en milliards d'EUR.</li>
                         <li>Récupération en temps réel : Toutes les 10 minutes (600 000 ms), le JS fetch les données via les API (hauteur de bloc via Blockstream et prix via CoinGecko). Les API sont gratuites et CORS-compatibles.</li>
                         <li>Calculs dynamiques : J'ai intégré une fonction JS calculateMinedBtc qui miroite le calcul Python pour déterminer les BTC minés cumulés (en tenant compte des halvings). Le total gaspillage est recalculé comme (BTC # manqués totaux × prix actuel), et les compteurs s'animent vers les nouvelles valeurs.</li>  
                         <li>Ceci est une simulation, <a href="https://colab.research.google.com/drive/1OC5ePgAxMX47JP14uQVTpBktjd2kZq6u?usp=sharing" target="_blank">j'ouvre le code source pour rendre la logique transparente</a>. Cette simulation peut donner une idée de "l'ordre de grandeur" et un rendement total brut sans pour autant prendre en compte CAPEX et autres considérations techniques et implémentations fines.</li>
@@ -288,17 +289,17 @@
         }
 
         // Données embeddées initiales
-        const initialTotalEuros = 6719284022;
-        const initialBtc = 63739.4375;
-        const initialPrice = 105418;
-        const initialBlocks = 418331;
+        const initialTotalEuros = 10084309810;
+        const initialBtc = 95609.4375;
+        const initialPrice = 105474;
+        const initialBlocks = 418334;
         const histData = [{"x": 2018.0, "y": 10000}, {"x": 2025.0, "y": 97000}];
-        const powerData = [{"x": 2025.7556468172484, "y": 105418.0}, {"x": 2025.8377823408625, "y": 108450.65904705701}, {"x": 2025.9199178644765, "y": 111555.16413932742}, {"x": 2026.0020533880904, "y": 114732.85616393758}, {"x": 2026.0841889117044, "y": 117985.09435793124}, {"x": 2026.1663244353183, "y": 121313.25646891886}, {"x": 2026.2484599589322, "y": 124718.73891634896}, {"x": 2026.3305954825462, "y": 128202.95695340095}, {"x": 2026.4127310061601, "y": 131767.34482949894}, {"x": 2026.494866529774, "y": 135413.35595344575}, {"x": 2026.577002053388, "y": 139142.46305717647}, {"x": 2026.659137577002, "y": 142956.1583601315}, {"x": 2026.7412731006161, "y": 146855.95373424765}, {"x": 2026.82340862423, "y": 150843.38086956763}, {"x": 2026.905544147844, "y": 154919.99144046663}, {"x": 2026.987679671458, "y": 159087.35727249575}, {"x": 2027.069815195072, "y": 163347.0705098417}, {"x": 2027.1519507186858, "y": 167700.74378340217}, {"x": 2027.2340862422998, "y": 172150.01037947624}, {"x": 2027.3162217659137, "y": 176696.52440906942}, {"x": 2027.3983572895277, "y": 181341.96097781253}, {"x": 2027.4804928131416, "y": 186088.01635649413}, {"x": 2027.5626283367556, "y": 190936.40815220596}, {"x": 2027.6447638603697, "y": 195888.87548010013}, {"x": 2027.7268993839837, "y": 200947.17913575892}, {"x": 2027.8090349075976, "y": 206113.10176817514}, {"x": 2027.8911704312115, "y": 211388.4480533436}, {"x": 2027.9733059548255, "y": 216775.04486846252}, {"x": 2028.0554414784394, "y": 222274.74146674457}, {"x": 2028.1375770020534, "y": 227889.4096528373}, {"x": 2028.2197125256673, "y": 233620.94395885168}, {"x": 2028.3018480492813, "y": 239471.26182099915}, {"x": 2028.3839835728952, "y": 245442.3037568357}, {"x": 2028.4661190965091, "y": 251536.0335431136}, {"x": 2028.5482546201233, "y": 257754.43839423888}, {"x": 2028.6303901437373, "y": 264099.5291413354}, {"x": 2028.7125256673512, "y": 270573.34041191393}, {"x": 2028.7946611909651, "y": 277177.9308101465}, {"x": 2028.876796714579, "y": 283915.38309774495}, {"x": 2028.958932238193, "y": 290787.8043754437}, {"x": 2029.041067761807, "y": 297797.3262650856}, {"x": 2029.123203285421, "y": 304946.10509231087}, {"x": 2029.2053388090349, "y": 312236.3220698487}, {"x": 2029.2874743326488, "y": 319670.18348141044}, {"x": 2029.3696098562627, "y": 327249.9208661844}, {"x": 2029.4517453798767, "y": 334977.79120393185}, {"x": 2029.5338809034909, "y": 342856.07710068265}, {"x": 2029.6160164271048, "y": 350887.0869750324}, {"x": 2029.6981519507187, "y": 359073.15524503717}, {"x": 2029.7802874743327, "y": 367416.642515709}, {"x": 2029.8624229979466, "y": 375919.93576710875}, {"x": 2029.9445585215606, "y": 384585.4485430378}, {"x": 2030.0266940451745, "y": 393415.6211403269}, {"x": 2030.1088295687885, "y": 402412.9207987219}, {"x": 2030.1909650924024, "y": 411579.8418913673}, {"x": 2030.2731006160163, "y": 420918.9061158843}, {"x": 2030.3552361396303, "y": 430432.66268604633}, {"x": 2030.4373716632444, "y": 440123.6885240483}, {"x": 2030.5195071868584, "y": 449994.5884533718}, {"x": 2030.6016427104723, "y": 460047.99539224367}, {"x": 2030.6837782340863, "y": 470286.5705476896}];
+        const powerData = [{"x": 2025.7556468172484, "y": 105474.0}, {"x": 2025.8377823408625, "y": 108508.27005188195}, {"x": 2025.9199178644765, "y": 111614.42431493122}, {"x": 2026.0020533880904, "y": 114793.80438857836}, {"x": 2026.0841889117044, "y": 118047.77023191904}, {"x": 2026.1663244353183, "y": 121377.70032444884}, {"x": 2026.2484599589322, "y": 124784.99182742028}, {"x": 2026.3305954825462, "y": 128271.06074582151}, {"x": 2026.4127310061601, "y": 131837.3420909766}, {"x": 2026.494866529774, "y": 135485.29004376612}, {"x": 2026.577002053388, "y": 139216.37811846775}, {"x": 2026.659137577002, "y": 143032.0993272165}, {"x": 2026.7412731006161, "y": 146933.96634508373}, {"x": 2026.82340862423, "y": 150923.51167577432}, {"x": 2026.905544147844, "y": 155002.28781794172}, {"x": 2026.987679671458, "y": 159171.8674321199}, {"x": 2027.069815195072, "y": 163433.84350827226}, {"x": 2027.1519507186858, "y": 167789.8295339559}, {"x": 2027.2340862422998, "y": 172241.4596631019}, {"x": 2027.3162217659137, "y": 176790.38888541036}, {"x": 2027.3983572895277, "y": 181438.29319635924}, {"x": 2027.4804928131416, "y": 186186.86976782774}, {"x": 2027.5626283367556, "y": 191037.83711933228}, {"x": 2027.6447638603697, "y": 195992.93528987537}, {"x": 2027.7268993839837, "y": 201053.92601040655}, {"x": 2027.8090349075976, "y": 206222.5928768949}, {"x": 2027.8911704312115, "y": 211500.74152401264}, {"x": 2027.9733059548255, "y": 216890.1997994291}, {"x": 2028.0554414784394, "y": 222392.81793871464}, {"x": 2028.1375770020534, "y": 228010.46874085415}, {"x": 2028.2197125256673, "y": 233745.0477443693}, {"x": 2028.3018480492813, "y": 239598.47340404926}, {"x": 2028.3839835728952, "y": 245572.687268289}, {"x": 2028.4661190965091, "y": 251669.65415703546}, {"x": 2028.5482546201233, "y": 257891.36234033993}, {"x": 2028.6303901437373, "y": 264239.823717517}, {"x": 2028.7125256673512, "y": 270717.07399690954}, {"x": 2028.7946611909651, "y": 277325.1728762582}, {"x": 2028.876796714579, "y": 284066.20422367676}, {"x": 2028.958932238193, "y": 290942.27625923045}, {"x": 2029.041067761807, "y": 297955.5217371193}, {"x": 2029.123203285421, "y": 305108.09812846384}, {"x": 2029.2053388090349, "y": 312402.1878046939}, {"x": 2029.2874743326488, "y": 319839.99822153983}, {"x": 2029.3696098562627, "y": 327423.76210362493}, {"x": 2029.4517453798767, "y": 335155.73762966006}, {"x": 2029.5338809034909, "y": 343038.2086182379}, {"x": 2029.6160164271048, "y": 351073.4847142288}, {"x": 2029.6981519507187, "y": 359263.901575775}, {"x": 2029.7802874743327, "y": 367611.8210618859}, {"x": 2029.8624229979466, "y": 376119.63142063055}, {"x": 2029.9445585215606, "y": 384789.7474779295}, {"x": 2030.0266940451745, "y": 393624.6108269445}, {"x": 2030.1088295687885, "y": 402626.6900180652}, {"x": 2030.1909650924024, "y": 411798.4807494932}, {"x": 2030.2731006160163, "y": 421142.5060584225}, {"x": 2030.3552361396303, "y": 430661.3165128161}, {"x": 2030.4373716632444, "y": 440357.49040377804}, {"x": 2030.5195071868584, "y": 450233.63393852033}, {"x": 2030.6016427104723, "y": 460292.38143392507}, {"x": 2030.6837782340863, "y": 470536.3955107004}];
         const initialTotalMw = 29718.734519744517;
         const startBlock = 499500;
-        const initialCurrentBlock = 917831;
+        const initialCurrentBlock = 917834;
 
-        let currentShare = 2;
+        let currentShare = 3;
         let lastHeight = initialCurrentBlock;
         let lastPrice = initialPrice;
         let lastTotalMw = initialTotalMw;
@@ -365,7 +366,7 @@
         // Initialisation
         window.onload = () => {
             // Animation initiale avec share=10
-            const initialShare = 0.02;
+            const initialShare = 0.03;
             const initialMw = initialTotalMw * initialShare;
             
             document.getElementById('totalEurosCounter').textContent = '0';
