@@ -98,7 +98,7 @@ def calculate_mined_btc(start_block, current_block):
     
     return total_btc
 
-def calculate_opportunity_cost(share=0.02):  # 2% de part hypothétique
+def calculate_opportunity_cost(share=0.03):  # 3% de part hypothétique
     """Calcule le coût d'opportunité, plus données pour graphique."""
     start_block = 499500  # Hauteur approximative au 1er janvier 2018
     current_block = get_current_block_height()
@@ -301,7 +301,8 @@ def generate_html():
             
             <select id="shareSelect" class="share-select">
                 <option value="1">1%</option>
-                <option value="2" selected>2%</option>
+                <option value="2">2%</option>
+                <option value="3" selected>3%</option>
                 <option value="5">5%</option>
                 <option value="10">10%</option>
                 <option value="15">15%</option>
@@ -344,7 +345,7 @@ def generate_html():
                 <button type="button" class="collapsible">Cliquez ici pour plus d'explications techniques sur le script.</button>
                 <div class="collapsible-content">
                     <ul>
-                        <li>Ce script calcule le potentiel manqué en milliards d'euros à miner Bitcoin depuis le 1er Janvier 2018. Il suppose que la France aurait pu dédier une part fixe (1,2,5,10 ou 15%) de la puissance de hachage globale du réseau Bitcoin depuis janvier 2018 (une hypothèse réaliste avec différents scénarios et basée sur une estimation d'électricité consommé globalement du Bitcoin ~500 TWh cumulés sur la période). Il fetch les données en temps réel (hauteur de bloc actuelle et prix du BTC en EUR) via des API gratuites. Le total est le nombre de BTC minés multiplié par le prix actuel, converti en milliards d'EUR.</li>
+                        <li>Ce script calcule le potentiel manqué en milliards d'euros à miner Bitcoin depuis le 1er Janvier 2018. Il suppose que la France aurait pu dédier une part fixe (1,2,3,5,10 ou 15%) de la puissance de hachage globale du réseau Bitcoin depuis janvier 2018 (une hypothèse réaliste avec différents scénarios et basée sur une estimation d'électricité consommé globalement du Bitcoin ~500 TWh cumulés sur la période). Il fetch les données en temps réel (hauteur de bloc actuelle et prix du BTC en EUR) via des API gratuites. Le total est le nombre de BTC minés multiplié par le prix actuel, converti en milliards d'EUR.</li>
                         <li>Récupération en temps réel : Toutes les 10 minutes (600 000 ms), le JS fetch les données via les API (hauteur de bloc via Blockstream et prix via CoinGecko). Les API sont gratuites et CORS-compatibles.</li>
                         <li>Calculs dynamiques : J'ai intégré une fonction JS calculateMinedBtc qui miroite le calcul Python pour déterminer les BTC minés cumulés (en tenant compte des halvings). Le total gaspillage est recalculé comme (BTC # manqués totaux × prix actuel), et les compteurs s'animent vers les nouvelles valeurs.</li>  
                         <li>Ceci est une simulation, <a href="https://colab.research.google.com/drive/1OC5ePgAxMX47JP14uQVTpBktjd2kZq6u?usp=sharing" target="_blank">j'ouvre le code source pour rendre la logique transparente</a>. Cette simulation peut donner une idée de "l'ordre de grandeur" et un rendement total brut sans pour autant prendre en compte CAPEX et autres considérations techniques et implémentations fines.</li>
@@ -444,7 +445,7 @@ def generate_html():
         const startBlock = {result['start_block']};
         const initialCurrentBlock = {result['initial_current_block']};
 
-        let currentShare = 2;
+        let currentShare = 3;
         let lastHeight = initialCurrentBlock;
         let lastPrice = initialPrice;
         let lastTotalMw = initialTotalMw;
@@ -511,7 +512,7 @@ def generate_html():
         // Initialisation
         window.onload = () => {{
             // Animation initiale avec share=10
-            const initialShare = 0.02;
+            const initialShare = 0.03;
             const initialMw = initialTotalMw * initialShare;
             
             document.getElementById('totalEurosCounter').textContent = '0';
