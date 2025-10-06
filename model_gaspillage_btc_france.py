@@ -304,13 +304,96 @@ def generate_html():
         button {{ padding: 10px; background: #FF9900; color: white; border: none; cursor: pointer; }}
 
         .updating {{ color: #ccc; font-size: 0.9em; text-align: center; margin-top: 20px; }}
+        /* Tooltip Styles - Updated for ! icon */
+        .tooltip {{
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }}
+        .tooltip .tooltiptext {{
+            visibility: hidden;
+            width: 350px;
+            background-color: #111;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -175px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid #F7931A;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }}
+        .tooltip .tooltiptext::after {{
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #F7931A transparent transparent transparent;
+        }}
+        .tooltip:hover .tooltiptext {{
+            visibility: visible;
+            opacity: 1;
+        }}
+
+        .tooltip .tooltip-icon {{
+            color: #0066cc;
+            font-weight: bold;
+            font-size: 0.7em;
+            margin-left: 2px;
+            vertical-align: super;
+        }}
+        
+        input[type="range"] {{
+            -webkit-appearance: none;
+            appearance: none;
+            height: 5px;
+            background: #ddd;
+            outline: none;
+            border-radius: 5px;
+        }}
+        input[type="range"]::-webkit-slider-thumb {{
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: orange;
+            cursor: pointer;
+            border-radius: 50%;
+        }}
+        input[type="range"]::-webkit-slider-runnable-track {{
+            background: #ddd;
+            height: 5px;
+            border-radius: 5px;
+        }}
+        input[type="range"]::-moz-range-thumb {{
+            width: 20px;
+            height: 20px;
+            background: orange;
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
+        }}
+        input[type="range"]::-moz-range-track {{
+            background: #ddd;
+            height: 5px;
+            border-radius: 5px;
+        }}
     </style>
 </head>
 <body>
     <div class="container">
         <div class="left">
             <h1>Compteur Bitcoin France</h1>
-            <p>Coût d'opportunité si la France avait miné X% (sélectionnable ci-dessous) de la puissance globale de hachage du réseau Bitcoin depuis 2018. Mises à jour en temps réel toutes les 10 minutes.</p>
+            <p>Coût d'<span class="tooltip">opportunité<span class="tooltip-icon">?</span><span class="tooltiptext">Le coût d'opportunité est un terme économique qui désigne ce que vous perdez en choisissant une option plutôt qu'une autre. Ici, c'est le regret financier : "Et si la France avait dépensé de l'argent/énergie pour miner du Bitcoin au lieu d'autre chose (comme des impôts ou des subventions) ? Combien d'euros aurait-elle gagnés aujourd'hui ?"</span></span> si la France avait miné X% (sélectionnable ci-dessous) de la <span class="tooltip">puissance globale de hachage<span class="tooltip-icon">?</span><span class="tooltiptext">La puissance globale de hachage est la vitesse totale à laquelle tous les mineurs du monde font des calculs (hachages) pour résoudre les puzzles mathématiques du Bitcoin. Mesurée en EH/s (exahashs par seconde), c'est la "force de calcul" qui protège le réseau. Actuellement ~1000 EH/s.</span></span> du <span class="tooltip">réseau Bitcoin<span class="tooltip-icon">?</span><span class="tooltiptext">Le réseau Bitcoin est un système décentralisé mondial : un réseau d'ordinateurs (nœuds) qui valident et stockent la blockchain ensemble, sans banque centrale. Il inclut les mineurs (qui sécurisent), les nœuds (qui vérifient) et les utilisateurs (wallets). Miner X% de sa puissance signifie contribuer X% des calculs totaux pour gagner des récompenses.</span></span> depuis 2018. Mises à jour en temps réel toutes les 10 minutes.</p>
             
             <select id="shareSelect" class="share-select">
                 <option value="1">1%</option>
@@ -321,20 +404,21 @@ def generate_html():
                 <option value="15">15%</option>
             </select>
             
-            <div class="label">MW/Jour Nécessaires</div>
+            <div class="label">MW/Jour Nécessaires <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Pour miner, il faut de l'électricité. Ici, estimés sur surplus nucléaire bas carbone par exemple. Pour 3% par exemple, ~900 MW/jour, semble faisable sans impact réseau.</span></span></div>
             <div class="counter" id="mwhCounter">0</div>
 
-            <div class="label">Total Manqués (€)</div>
+            <div class="label">Total Manqués (€) <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Valeur actuelle des BTC manqués (coût d'opportunité total). Pour 3% par exemple, ~10 milliards € aujourd'hui. C'est (BTC minés × prix actuel), sans déduire coûts (élec ~3 Md€ sur période, couvert par ROI >5x).</span></span></div>
             <div class="counter" id="totalEurosCounter">0</div>
             
-            <div class="label">BTC Manqués</div>
+            <div class="label">BTC Manqués <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Les BTC "manqués" sont les récompenses que la France aurait gagnées en minant. "Miner" n'est pas creuser de l'or, mais un processus informatique : des ordinateurs résolvent des puzzles pour ajouter des blocs à la blockchain et sécuriser les transactions. Le premier qui résout gagne ~3.125 BTC/bloc dans le cycle actuel. Les "pools" de minage permettent de distribuer les récompenses aux différents mineurs en fonction de leur part de hachage du réseau.</span></span></div>
             <div class="counter" id="btcCounter">0</div>
             
-            <div class="label">Prix BTC Actuel (€)</div>
+            <div class="label">Prix BTC Actuel (€) <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Prix de marché actuel du Bitcoin en euros, mis à jour en live via API CoinGecko. Utilisé pour valoriser les BTC manqués (multiplié par le nombre de BTC).</span></span></div>
             <div class="counter" id="priceCounter">0</div>
             
-            <div class="label">Blocs Manqués</div>
+            <div class="label">Blocs Manqués <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Un bloc = une page de transactions ajoutée ~toutes les 10 min. On compte ici le nombre passé de blocs de transactions depuis 2018.</span></span></div>
             <div class="counter" id="blocksCounter">0</div>
+            
             
             
             
@@ -342,12 +426,12 @@ def generate_html():
         </div>
         
         <div class="right">
-            <h2>Prix Historique BTC (EUR) & Loi de Puissance (exposant 5.6)</h2>
+            <h2>Prix Historique BTC (EUR) & Loi de Puissance (exposant <span class="tooltip"><span class="tooltiptext">La loi de puissance modélise la croissance du prix BTC : P(t) = a * t^5.6, où t = jours depuis genèse (2009). Calibrée sur prix actuel, elle projette une hausse ~35-40%/an. Exposant 5.6 est historique (basé sur données 2010-2025).</span>5.6</span>)</h2>
             <canvas id="powerLawChart"></canvas>
             <div class="additional-text">
                 <ul>
                     <li>Ce manque à gagner n'inclut pas les potentielles retombées économiques de réindustrialiser la France avec une nouvelle industrie novatrice.</li>
-                    <li>La création d'emplois dans des régions rurales et là où les containers de minage peuvent s'implémenter.</li>
+                    <li>La création d'emplois dans des régions rurales et là où les containers de minage peuvent s'implémenter. <span class="tooltip"><span class="tooltiptext">Serveurs : ASIC spéciaux (ex. Antminer, ~5k€/unité). Placés en data centers sécurisés (Nord France pour froid/élec pas chère), propriété État/EDF. Investissement ~1-5 Md€, amorti par BTC.</span></span></li>
                     <li>La potentielle mise en place de circularité en injectant une partie des profits dans les collectivités locales.</li>
                     <li>Pour maximiser l'utilité du minage de Bitcoin dans la société : les profits du minage pourraient servir au bien-être des populations, au développement des énergies renouvelables, à l'agroécologie et à aider à la transition bas-carbone des pays du Sud par exemple.</li>
                     <li><a href="https://x.com/i/grok/share/vxt7T2ufIWKKPaWyWEj0I5Mtl" target="_blank">Le Bitcoin peut devenir un grand allié pour accélérer la transition énergétique</a>. Mais il faut interdire l’utilisation de combustible fossile dans le minage Bitcoin sous peine de lourdes sanctions et réguler le minage pour que l'usage n'empiète pas sur la consommation d'électricité courante (optimisation sous contraintes).</li>
@@ -369,33 +453,31 @@ def generate_html():
             <br />
                 <button type="button" class="collapsible"><h4>Effectuer une simulation complète : Minage Bitcoin - France (En Euro)</h4></button>
                 <div class="collapsible-content">
-                    <p style="color: #FF9900;">Cette simulation modélise un déploiement variable sur surplus EDF (2026-2030), avec loi de puissance pour le prix BTC (en USD, convertis en EUR), halving 2028, et croissance du hash global. Glissez les sliders pour ajuster les paramètres et voir les mises à jour en temps réel.</p>
+                    <p style="color: #FF9900;">Cette simulation modélise un déploiement variable sur surplus EDF (2026-2030), avec loi de puissance pour le prix BTC (en USD, convertis en EUR), halving 2028, et croissance du hash global. Glissez les sliders pour ajuster les paramètres et voir les mises à jour en temps réel. <span class="tooltip"><span class="tooltiptext">"La France" = l'État français (gouvernement, via Ministère Économie/Transition Écologique), pas la Banque de France. Initiative publique pour souveraineté numérique, comme un projet d'infrastructure (ex. TGV). Sécurité : Data centers blindés (ANSSI audits), wallets offline multi-sig. Pourquoi 2018 ? Équilibre : post-bulle 2017, maturité tech, inclut 2 halvings ; pas 2015 (trop volatile), pas 2021 (moins de recul).</span></span></p>
                     
                     <div class="slider-container">
-                        <label>Nombre de GW :</label>
+                        <label>Nombre de GW : <span class="tooltip"><span class="tooltiptext">Puissance allouée (ex. 1 GW = 1000 MW). Interruptible sur surplus EDF, avec récupération chaleur (chauffage urbain). Pour 1 GW, ~55 EH/s (5.5% global), investissement ~2-3 Md€ (hardware + infra), amorti <6 mois.</span></span></label>
                         <input type="range" id="gwSlider" min="0.15" max="3" step="0.05" value="1">
                         <span id="gwValue">1</span>
                     </div>
                     
                     <div class="slider-container">
-                        <label>Exposant loi de puissance :</label>
+                        <label>Exposant loi de puissance : <span class="tooltip"><span class="tooltiptext">Exposant dans P(t) = a * t^exposant. 5.6 est calibré historique ; plus haut = croissance plus agressive.</span></span></label>
                         <input type="range" id="exponentSlider" min="4" max="7" step="0.1" value="5.6">
                         <span id="exponentValue">5.6</span>
                     </div>
                     
                     <div class="slider-container">
-                        <label>Croissance hash/an (%):</label>
+                        <label>Croissance hash/an (%): <span class="tooltip"><span class="tooltiptext">Croissance annuelle estimée du hash global (~50%/an historique). Dilue le % français sans upgrade hardware.</span></span></label>
                         <input type="range" id="growthSlider" min="0" max="100" step="5" value="50">
                         <span id="growthValue">50</span>
                     </div>
                     
                     <div class="slider-container">
-                        <label>Taux USD/EUR :</label>
+                        <label>Taux USD/EUR : <span class="tooltip"><span class="tooltiptext">Taux de change pour convertir projections USD en EUR (actuel ~0.85).</span></span></label>
                         <input type="range" id="exchangeSlider" min="0.5" max="1.5" step="0.01" value="0.85">
                         <span id="exchangeValue">0.85</span>
                     </div>
-                    
-                    <button onclick="updateSimulation()">Mettre à jour</button>
                     
                     <div id="results-table"></div>
                     
@@ -651,7 +733,7 @@ def generate_html():
         const BLOCKS_PER_DAY = 144;
         const DAYS_PER_YEAR = 365.25;
         const FEES_PER_BLOCK = 0.022;
-        let A_POWER_LAW = 7.657678825333588e-17;  // Calibré initialement
+        let A_POWER_LAW = {result['A']};  // Calibré initialement
         let ANNUAL_GROWTH_RATE = 1.5;  // 50% initial
         let EXCHANGE_RATE = 0.85;
         let FRENCH_HASH_EH_S = BASE_FRENCH_HASH_EH_S * 1;  // Initial pour 1 GW
@@ -683,18 +765,22 @@ def generate_html():
             return A_POWER_LAW * Math.pow(days, exponent);
         }}
         
-        // Mise à jour des sliders
+        // Mise à jour des sliders avec appel dynamique à updateSimulation
         document.getElementById('gwSlider').oninput = function() {{
             document.getElementById('gwValue').textContent = this.value;
+            updateSimulation();
         }};
         document.getElementById('exponentSlider').oninput = function() {{
             document.getElementById('exponentValue').textContent = this.value;
+            updateSimulation();
         }};
         document.getElementById('growthSlider').oninput = function() {{
             document.getElementById('growthValue').textContent = this.value;
+            updateSimulation();
         }};
         document.getElementById('exchangeSlider').oninput = function() {{
             document.getElementById('exchangeValue').textContent = this.value;
+            updateSimulation();
         }};
         
         function updateSimulation() {{
@@ -706,7 +792,7 @@ def generate_html():
             
             // Recalculer A si exposant change (calibré sur prix actuel ~123000 USD)
             const currentDays = getDaysFromGenesis(2025);
-            const currentPrice = 123000;
+            const currentPrice = {result['price_eur']};
             A_POWER_LAW = currentPrice / Math.pow(currentDays, exponent);
             
             // Calcul des données
@@ -866,7 +952,7 @@ def generate_html():
     with open('index.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
     
-    print("Fichier index.html généré ! Graphique modifié : Ajout d'une courbe de loi de puissance (exposant 5.6) en pointillé orange clair, projetée sur 5 ans. Historique conservé en continu. Titre du graphique mis à jour.")
+    print("Fichier index.html généré ? Tooltips ajoutés sur les notions clés avec explications détaillées des discussions précédentes. Hover pour voir.")
 
 if __name__ == "__main__":
     generate_html()
