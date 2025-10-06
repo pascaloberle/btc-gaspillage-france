@@ -290,6 +290,19 @@ def generate_html():
         background-color: transparent;
         text-decoration: underline;
         }}
+
+        table {{ border-collapse: collapse; width: 100%; color: #FFF;}}
+        th, td {{ border: 1px solid #FF9900; padding: 8px; text-align: right; }}
+        th {{ background-color: #000; text-align: left; }}
+        .slider-container {{ margin: 10px 0; display: flex; align-items: center; color: #FF9900;}}
+        .slider-container label {{ width: 200px; margin-right: 10px; }}
+        .slider-container input {{ flex: 1; }}
+        .slider-container span {{ width: 60px; margin-left: 10px; text-align: right; }}
+        .wrapper {{
+            text-align: center;
+        }}
+        button {{ padding: 10px; background: #FF9900; color: white; border: none; cursor: pointer; }}
+
         .updating {{ color: #ccc; font-size: 0.9em; text-align: center; margin-top: 20px; }}
     </style>
 </head>
@@ -339,10 +352,10 @@ def generate_html():
                     <li>Pour maximiser l'utilité du minage de Bitcoin dans la société : les profits du minage pourraient servir au bien-être des populations, au développement des énergies renouvelables, à l'agroécologie et à aider à la transition bas-carbone des pays du Sud par exemple.</li>
                     <li><a href="https://x.com/i/grok/share/vxt7T2ufIWKKPaWyWEj0I5Mtl" target="_blank">Le Bitcoin peut devenir un grand allié pour accélérer la transition énergétique</a>. Mais il faut interdire l’utilisation de combustible fossile dans le minage Bitcoin sous peine de lourdes sanctions et réguler le minage pour que l'usage n'empiète pas sur la consommation d'électricité courante (optimisation sous contraintes).</li>
                     <li><a href="https://b1m.io/" target="_blank">Bitcoin suit une loi de puissance</a> et le rendement futur pourrait être projeté avec un écart type d'erreur.</li>
-                    <li>En apprendre plus sur Bitcoin avec <a href="https://tinyurl.com/viebitcoin" target="_blank">un article scientifique qui lui est dédié</a>.</li>
+                    <li>📚 En apprendre plus sur Bitcoin avec <b><a href="https://tinyurl.com/viebitcoin" target="_blank" style="color: red;">un article scientifique qui lui est dédié</a></b>. 📚</li>
                 </ul>
                 <br />
-                <button type="button" class="collapsible">Cliquez ici pour plus d'explications techniques sur le script.</button>
+                <button type="button" class="collapsible"><h4>Cliquez ici pour plus d'explications techniques sur le script.</h4></button>
                 <div class="collapsible-content">
                     <ul>
                         <li>Ce script calcule le potentiel manqué en milliards d'euros à miner Bitcoin depuis le 1er Janvier 2018. Il suppose que la France aurait pu dédier une part fixe (1,2,3,5,10 ou 15%) de la puissance de hachage globale du réseau Bitcoin depuis janvier 2018 (une hypothèse réaliste avec différents scénarios et basée sur une estimation d'électricité consommé globalement du Bitcoin ~500 TWh cumulés sur la période). Il fetch les données en temps réel (hauteur de bloc actuelle et prix du BTC en EUR) via des API gratuites. Le total est le nombre de BTC minés multiplié par le prix actuel, converti en milliards d'EUR.</li>
@@ -352,10 +365,55 @@ def generate_html():
                     </ul>
                 </div>
             </div>
+            <br />
+            <br />
+                <button type="button" class="collapsible"><h4>Effectuer une simulation complète : Minage Bitcoin - France (En Euro)</h4></button>
+                <div class="collapsible-content">
+                    <p style="color: #FF9900;">Cette simulation modélise un déploiement variable sur surplus EDF (2026-2030), avec loi de puissance pour le prix BTC (en USD, convertis en EUR), halving 2028, et croissance du hash global. Glissez les sliders pour ajuster les paramètres et voir les mises à jour en temps réel.</p>
+                    
+                    <div class="slider-container">
+                        <label>Nombre de GW :</label>
+                        <input type="range" id="gwSlider" min="0.15" max="3" step="0.05" value="1">
+                        <span id="gwValue">1</span>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>Exposant loi de puissance :</label>
+                        <input type="range" id="exponentSlider" min="4" max="7" step="0.1" value="5.6">
+                        <span id="exponentValue">5.6</span>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>Croissance hash/an (%):</label>
+                        <input type="range" id="growthSlider" min="0" max="100" step="5" value="50">
+                        <span id="growthValue">50</span>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>Taux USD/EUR :</label>
+                        <input type="range" id="exchangeSlider" min="0.5" max="1.5" step="0.01" value="0.85">
+                        <span id="exchangeValue">0.85</span>
+                    </div>
+                    
+                    <button onclick="updateSimulation()">Mettre à jour</button>
+                    
+                    <div id="results-table"></div>
+                    
+                    <h2>Évolution Projetée du Prix du Bitcoin (USD)</h2>
+                    <canvas id="priceChart" width="800" height="400"></canvas>
+                    
+                    <h2>Revenus Annuels Projetés (M EUR)</h2>
+                    <canvas id="revenueChart" width="800" height="400"></canvas>
+                    
+                    <h2>Revenus Cumulés Projetés (M EUR)</h2>
+                    <canvas id="cumulativeChart" width="800" height="400"></canvas>
+                </div>            
         </div>
     </div>
-
+    
+    
     <script>
+        
         var coll = document.getElementsByClassName("collapsible");
         var i;
 
@@ -584,6 +642,222 @@ def generate_html():
             // Mises à jour toutes les minutes
             setInterval(updateData, 600000);
         }};
+
+
+        // Paramètres de simulation
+        const GENESIS_DATE = new Date(2009, 0, 3);  // 3 janv 2009
+        const CURRENT_HASH_EH_S = 1000;  // Hash global actuel (EH/s)
+        const BASE_FRENCH_HASH_EH_S = 55.6;   // Pour 1 GW à 18 J/TH
+        const BLOCKS_PER_DAY = 144;
+        const DAYS_PER_YEAR = 365.25;
+        const FEES_PER_BLOCK = 0.022;
+        let A_POWER_LAW = 7.657678825333588e-17;  // Calibré initialement
+        let ANNUAL_GROWTH_RATE = 1.5;  // 50% initial
+        let EXCHANGE_RATE = 0.85;
+        let FRENCH_HASH_EH_S = BASE_FRENCH_HASH_EH_S * 1;  // Initial pour 1 GW
+        
+        let priceChart, revenueChart, cumulativeChart;
+        
+        // Halving approx avril 2028 (jour 121 de l'année)
+        function getAverageReward(year) {{
+            if (year < 2028) {{
+                return 3.125 + FEES_PER_BLOCK;
+            }} else if (year < 2032) {{
+                if (year === 2028) {{
+                    // Moyenne 2028 : ~121 jours à 3.125, reste à 1.5625
+                    const full_reward_days = 121 / DAYS_PER_YEAR;
+                    return (3.125 * full_reward_days + 1.5625 * (1 - full_reward_days)) + FEES_PER_BLOCK;
+                }}
+                return 1.5625 + FEES_PER_BLOCK;
+            }}
+            return 0.78125 + FEES_PER_BLOCK;  // Post-2032
+        }}
+        
+        function getDaysFromGenesis(year) {{
+            const midDate = new Date(year, 6, 1);  // 1er juillet
+            const diffTime = midDate - GENESIS_DATE;
+            return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        }}
+        
+        function getBTCPrice(days, exponent) {{
+            return A_POWER_LAW * Math.pow(days, exponent);
+        }}
+        
+        // Mise à jour des sliders
+        document.getElementById('gwSlider').oninput = function() {{
+            document.getElementById('gwValue').textContent = this.value;
+        }};
+        document.getElementById('exponentSlider').oninput = function() {{
+            document.getElementById('exponentValue').textContent = this.value;
+        }};
+        document.getElementById('growthSlider').oninput = function() {{
+            document.getElementById('growthValue').textContent = this.value;
+        }};
+        document.getElementById('exchangeSlider').oninput = function() {{
+            document.getElementById('exchangeValue').textContent = this.value;
+        }};
+        
+        function updateSimulation() {{
+            const gw = parseFloat(document.getElementById('gwSlider').value);
+            const exponent = parseFloat(document.getElementById('exponentSlider').value);
+            ANNUAL_GROWTH_RATE = 1 + (parseFloat(document.getElementById('growthSlider').value) / 100);
+            EXCHANGE_RATE = parseFloat(document.getElementById('exchangeSlider').value);
+            FRENCH_HASH_EH_S = BASE_FRENCH_HASH_EH_S * gw;
+            
+            // Recalculer A si exposant change (calibré sur prix actuel ~123000 USD)
+            const currentDays = getDaysFromGenesis(2025);
+            const currentPrice = 123000;
+            A_POWER_LAW = currentPrice / Math.pow(currentDays, exponent);
+            
+            // Calcul des données
+            const years = [2026, 2027, 2028, 2029, 2030];
+            let simulationData = [];
+            let cumulativeRevenueEur = 0;
+            
+            years.forEach(year => {{
+                const days = getDaysFromGenesis(year);
+                const priceUsd = getBTCPrice(days, exponent);
+                const hashYear = CURRENT_HASH_EH_S * Math.pow(ANNUAL_GROWTH_RATE, year - 2026);
+                const hashPct = (FRENCH_HASH_EH_S / hashYear) * 100;
+                const avgReward = getAverageReward(year);
+                const totalBTCEmittedYear = avgReward * BLOCKS_PER_DAY * DAYS_PER_YEAR;
+                const btcMined = (hashPct / 100) * totalBTCEmittedYear;
+                const revenueUsd = btcMined * priceUsd;
+                const revenueEur = revenueUsd * EXCHANGE_RATE;
+                cumulativeRevenueEur += revenueEur;
+                
+                simulationData.push({{
+                    year: year,
+                    priceUsd: priceUsd,
+                    hashPct: hashPct,
+                    btcMined: btcMined,
+                    revenueEur: revenueEur,
+                    cumulativeEur: cumulativeRevenueEur
+                }});
+            }});
+            
+            // Génération du tableau
+            let tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Année</th>
+                            <th>Prix BTC (USD)</th>
+                            <th>% Hash FR</th>
+                            <th>BTC Minés</th>
+                            <th>Revenus Annuels (M EUR)</th>
+                            <th>Revenus Cumulés (M EUR)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            simulationData.forEach(row => {{
+                tableHTML += `
+                    <tr>
+                        <td>${{row.year}}</td>
+                        <td>${{Math.round(row.priceUsd).toLocaleString()}}</td>
+                        <td>${{row.hashPct.toFixed(3)}} %</td>
+                        <td>${{Math.round(row.btcMined).toLocaleString()}}</td>
+                        <td>${{Math.round(row.revenueEur).toLocaleString()}}</td>
+                        <td>${{Math.round(row.cumulativeEur).toLocaleString()}}</td>
+                    </tr>
+                `;
+            }});
+            tableHTML += `
+                    </tbody>
+                    <tfoot>
+                        <tr style="font-weight: bold;">
+                            <td>Total</td>
+                            <td colspan="2"></td>
+                            <td>${{Math.round(simulationData.reduce((sum, r) => sum + r.btcMined, 0)).toLocaleString()}} BTC</td>
+                            <td colspan="2">${{Math.round(simulationData[simulationData.length - 1].cumulativeEur).toLocaleString()}} M EUR</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            `;
+            document.getElementById('results-table').innerHTML = tableHTML;
+            
+            // Mise à jour des graphiques
+            if (priceChart) priceChart.destroy();
+            if (revenueChart) revenueChart.destroy();
+            if (cumulativeChart) cumulativeChart.destroy();
+            
+            // Graphique 1: Prix BTC (USD)
+            const priceCtx = document.getElementById('priceChart').getContext('2d');
+            priceChart = new Chart(priceCtx, {{
+                type: 'line',
+                data: {{
+                    labels: years.map(y => y.toString()),
+                    datasets: [{{
+                        label: 'Prix BTC (USD)',
+                        data: simulationData.map(d => d.priceUsd),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.1
+                    }}]
+                }},
+                options: {{
+                    responsive: true,
+                    scales: {{
+                        y: {{ beginAtZero: false, title: {{ display: true, text: 'Prix (USD)' }} }},
+                        x: {{ title: {{ display: true, text: 'Année' }} }}
+                    }},
+                    plugins: {{ title: {{ display: true, text: 'Projection du Prix du Bitcoin (Loi de Puissance)' }} }}
+                }}
+            }});
+            
+            // Graphique 2: Revenus Annuels (M EUR)
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(revenueCtx, {{
+                type: 'bar',
+                data: {{
+                    labels: years.map(y => y.toString()),
+                    datasets: [{{
+                        label: 'Revenus (M EUR)',
+                        data: simulationData.map(d => d.revenueEur),
+                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']
+                    }}]
+                }},
+                options: {{
+                    responsive: true,
+                    scales: {{
+                        y: {{ beginAtZero: true, title: {{ display: true, text: 'Revenus (M EUR)' }} }},
+                        x: {{ title: {{ display: true, text: 'Année' }} }}
+                    }},
+                    plugins: {{ title: {{ display: true, text: 'Revenus Annuels Projetés' }} }}
+                }}
+            }});
+            
+            // Graphique 3: Revenus Cumulés (M EUR)
+            const cumulativeCtx = document.getElementById('cumulativeChart').getContext('2d');
+            cumulativeChart = new Chart(cumulativeCtx, {{
+                type: 'line',
+                data: {{
+                    labels: years.map(y => y.toString()),
+                    datasets: [{{
+                        label: 'Revenus Cumulés (M EUR)',
+                        data: simulationData.map(d => d.cumulativeEur),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                        fill: true,
+                        tension: 0.1
+                    }}]
+                }},
+                options: {{
+                    responsive: true,
+                    scales: {{
+                        y: {{ beginAtZero: true, title: {{ display: true, text: 'Revenus Cumulés (M EUR)' }} }},
+                        x: {{ title: {{ display: true, text: 'Année' }} }}
+                    }},
+                    plugins: {{ title: {{ display: true, text: 'Projection des Revenus Cumulés' }} }}
+                }}
+            }});
+        }}
+        
+        // Initialisation
+        updateSimulation();
+    
     </script>
 </body>
 </html>
