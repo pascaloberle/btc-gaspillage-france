@@ -352,41 +352,59 @@ def generate_html():
             vertical-align: super;
         }}
         
+        :root {{
+        --track-height: 6px;
+        --thumb-height: 18px;
+        --thumb-width: 18px;
+        }}
+
         input[type="range"] {{
-            -webkit-appearance: none;
-            appearance: none;
-            height: 5px;
-            background: #ddd;
-            outline: none;
-            border-radius: 5px;
+        appearance: none;
+        background: transparent;
+        width: 15rem;
+        cursor: pointer;
+        border-radius: 3px;
         }}
-        input[type="range"]::-webkit-slider-thumb {{
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: orange;
-            cursor: pointer;
-            border-radius: 50%;
-        }}
+
+        /* Inpiut Track */
+
+        /* Chrome, Safari, Edge (Chromium) */
         input[type="range"]::-webkit-slider-runnable-track {{
-            background: #ddd;
-            height: 5px;
-            border-radius: 5px;
+        background: linear-gradient(to right, #fff 0%, #ff9900 100%);
+        height: var(--track-height);
+        border-radius: 3px;
         }}
-        input[type="range"]::-moz-range-thumb {{
-            width: 20px;
-            height: 20px;
-            background: orange;
-            cursor: pointer;
-            border-radius: 50%;
-            border: none;
-        }}
+        
+        /* Firefox */
         input[type="range"]::-moz-range-track {{
-            background: #ddd;
-            height: 5px;
-            border-radius: 5px;
+        background: linear-gradient(to right, #fff 0%, #ff9900 100%);
+        height: var(--track-height);
+        border-radius: 3px;
         }}
+
+        /* Inpiut Thumb */
+
+        /* Chrome, Safari, Edge (Chromium) */
+        input[type="range"]::-webkit-slider-thumb {{
+        appearance: none;
+        background: #fff;
+        border-radius: 50%;
+        width: var(--thumb-width);
+        height: var(--thumb-height);
+        margin-top: calc((var(--track-height) / 2) - (var(--thumb-height) / 2));
+        border: 3px solid #ff9900;
+        }}
+
+        /* Firefox */
+        input[type="range"]::-moz-range-thumb {{
+        appearance: none;
+        background: #fff;
+        border-radius: 0;
+        border-radius: 50%;
+        border: 3px solid #ff9900;
+        }}
+
+
     </style>
 </head>
 <body>
