@@ -952,7 +952,7 @@ def generate_html():
     with open('index.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
     
-    print("Fichier index.html généré ? Tooltips ajoutés sur les notions clés avec explications détaillées des discussions précédentes. Hover pour voir.")
+    print("Fichier index.html généré")
 
 if __name__ == "__main__":
     generate_html()
