@@ -352,7 +352,7 @@ def generate_html():
                     <li>Pour maximiser l'utilité du minage de Bitcoin dans la société : les profits du minage pourraient servir au bien-être des populations, au développement des énergies renouvelables, à l'agroécologie et à aider à la transition bas-carbone des pays du Sud par exemple.</li>
                     <li><a href="https://x.com/i/grok/share/vxt7T2ufIWKKPaWyWEj0I5Mtl" target="_blank">Le Bitcoin peut devenir un grand allié pour accélérer la transition énergétique</a>. Mais il faut interdire l’utilisation de combustible fossile dans le minage Bitcoin sous peine de lourdes sanctions et réguler le minage pour que l'usage n'empiète pas sur la consommation d'électricité courante (optimisation sous contraintes).</li>
                     <li><a href="https://b1m.io/" target="_blank">Bitcoin suit une loi de puissance</a> et le rendement futur pourrait être projeté avec un écart type d'erreur.</li>
-                    <li>📚 En apprendre plus sur Bitcoin avec <b><a href="https://tinyurl.com/viebitcoin" target="_blank" style="color: red;">un article scientifique qui lui est dédié</a></b>. 📚</li>
+                    <li>📚 En apprendre plus sur Bitcoin avec <b><a href="https://tinyurl.com/viebitcoin" target="_blank" style="color: orange;">un article scientifique qui lui est dédié</a></b>. 📚</li>
                 </ul>
                 <br />
                 <button type="button" class="collapsible"><h4>Cliquez ici pour plus d'explications techniques sur le script.</h4></button>
