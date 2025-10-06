@@ -559,7 +559,7 @@ def generate_html():
         }}
 
         // Animation fluide des compteurs
-        function animateCounter(id, target, duration = 2000, suffix = '') {{
+        function animateCounter(id, target, duration = 4000, suffix = '') {{
             const counter = document.getElementById(id);
             const start = parseFloat(counter.textContent.replace(/,/g, '').replace(/[^0-9.-]/g, '')) || 0;
             const range = target - start;
