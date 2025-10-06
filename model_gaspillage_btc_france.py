@@ -322,7 +322,7 @@ def generate_html():
             z-index: 1;
             bottom: 125%;
             left: 50%;
-            margin-left: -175px;
+            margin-left: -45px;
             opacity: 0;
             transition: opacity 0.3s;
             border: 1px solid #F7931A;
@@ -333,7 +333,7 @@ def generate_html():
             content: "";
             position: absolute;
             top: 100%;
-            left: 50%;
+            right: 80%;
             margin-left: -5px;
             border-width: 5px;
             border-style: solid;
@@ -393,7 +393,7 @@ def generate_html():
     <div class="container">
         <div class="left">
             <h1>Compteur Bitcoin France</h1>
-            <p>Coût d'<span class="tooltip">opportunité<span class="tooltip-icon">?</span><span class="tooltiptext">Le coût d'opportunité est un terme économique qui désigne ce que vous perdez en choisissant une option plutôt qu'une autre. Ici, c'est le regret financier : "Et si la France avait dépensé de l'argent/énergie pour miner du Bitcoin au lieu d'autre chose (comme des impôts ou des subventions) ? Combien d'euros aurait-elle gagnés aujourd'hui ?"</span></span> si la France avait miné X% (sélectionnable ci-dessous) de la <span class="tooltip">puissance globale de hachage<span class="tooltip-icon">?</span><span class="tooltiptext">La puissance globale de hachage est la vitesse totale à laquelle tous les mineurs du monde font des calculs (hachages) pour résoudre les puzzles mathématiques du Bitcoin. Mesurée en EH/s (exahashs par seconde), c'est la "force de calcul" qui protège le réseau. Actuellement ~1000 EH/s.</span></span> du <span class="tooltip">réseau Bitcoin<span class="tooltip-icon">?</span><span class="tooltiptext">Le réseau Bitcoin est un système décentralisé mondial : un réseau d'ordinateurs (nœuds) qui valident et stockent la blockchain ensemble, sans banque centrale. Il inclut les mineurs (qui sécurisent), les nœuds (qui vérifient) et les utilisateurs (wallets). Miner X% de sa puissance signifie contribuer X% des calculs totaux pour gagner des récompenses.</span></span> depuis 2018. Mises à jour en temps réel toutes les 10 minutes.</p>
+            <p>Coût d'<span class="tooltip">opportunité<span class="tooltip-icon">?</span><span class="tooltiptext">Le coût d'opportunité est un terme économique qui désigne ce que vous perdez en choisissant une option plutôt qu'une autre. Ici, c'est le regret financier : "Et si la France avait dépensé de l'argent/énergie pour miner du Bitcoin au lieu d'autre chose (comme des impôts ou des subventions) ? Combien d'euros aurait-elle gagnés aujourd'hui ?"</span></span> si la France avait miné X% (sélectionnable ci-dessous) de la <span class="tooltip">puissance globale de hachage<span class="tooltip-icon">.  ?</span><span class="tooltiptext">La puissance globale de hachage est la vitesse totale à laquelle tous les mineurs du monde font des calculs (hachages) pour résoudre les puzzles mathématiques du Bitcoin. Mesurée en EH/s (exahashs par seconde), c'est la "force de calcul" qui protège le réseau. Actuellement ~1000 EH/s.</span></span> du <span class="tooltip">réseau Bitcoin<span class="tooltip-icon">?</span><span class="tooltiptext">Le réseau Bitcoin est un système décentralisé mondial : un réseau d'ordinateurs (nœuds) qui valident et stockent la blockchain ensemble, sans banque centrale. Il inclut les mineurs (qui sécurisent), les nœuds (qui vérifient) et les utilisateurs (wallets). Miner X% de sa puissance signifie contribuer X% des calculs totaux pour gagner des récompenses.</span></span> depuis 2018. Mises à jour en temps réel toutes les 10 minutes.</p>
             
             <select id="shareSelect" class="share-select">
                 <option value="1">1%</option>
@@ -432,6 +432,7 @@ def generate_html():
                 <ul>
                     <li>Ce manque à gagner n'inclut pas les potentielles retombées économiques de réindustrialiser la France avec une nouvelle industrie novatrice.</li>
                     <li>La création d'emplois dans des régions rurales et là où les containers de minage peuvent s'implémenter. <span class="tooltip"><span class="tooltiptext">Serveurs : ASIC spéciaux (ex. Antminer, ~5k€/unité). Placés en data centers sécurisés (Nord France pour froid/élec pas chère), propriété État/EDF. Investissement ~1-5 Md€, amorti par BTC.</span></span></li>
+                    <li>Aide à l'effort national pour repasser sous les 3% de déficit (sans taxe ni subvention).</li>
                     <li>La potentielle mise en place de circularité en injectant une partie des profits dans les collectivités locales.</li>
                     <li>Pour maximiser l'utilité du minage de Bitcoin dans la société : les profits du minage pourraient servir au bien-être des populations, au développement des énergies renouvelables, à l'agroécologie et à aider à la transition bas-carbone des pays du Sud par exemple.</li>
                     <li><a href="https://x.com/i/grok/share/vxt7T2ufIWKKPaWyWEj0I5Mtl" target="_blank">Le Bitcoin peut devenir un grand allié pour accélérer la transition énergétique</a>. Mais il faut interdire l’utilisation de combustible fossile dans le minage Bitcoin sous peine de lourdes sanctions et réguler le minage pour que l'usage n'empiète pas sur la consommation d'électricité courante (optimisation sous contraintes).</li>
