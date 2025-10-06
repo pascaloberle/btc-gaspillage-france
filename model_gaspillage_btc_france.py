@@ -58,7 +58,7 @@ def get_historical_prices(current_date):
         print(f"Erreur hist: {e}")
         return [{'x': 2018.0, 'y': 10000}, {'x': 2025.0, 'y': 97000}]  # Dummy fallback
 
-def get_power_law_points(current_date, exponent=5.8, years_ahead=5):
+def get_power_law_points(current_date, exponent=5.6, years_ahead=5):
     """Génère des points pour la courbe de loi de puissance."""
     current_days = days_since_genesis(current_date)
     price_eur = get_btc_price_eur()
@@ -329,7 +329,7 @@ def generate_html():
         </div>
         
         <div class="right">
-            <h2>Prix Historique BTC (EUR) & Loi de Puissance (exposant 5.8)</h2>
+            <h2>Prix Historique BTC (EUR) & Loi de Puissance (exposant 5.6)</h2>
             <canvas id="powerLawChart"></canvas>
             <div class="additional-text">
                 <ul>
@@ -543,7 +543,7 @@ def generate_html():
                             fill: false
                         }},
                         {{
-                            label: 'Loi de Puissance (exposant 5.8)',
+                            label: 'Loi de Puissance (exposant 5.6)',
                             data: powerData,
                             borderColor: '#FF6B35',
                             backgroundColor: 'transparent',
@@ -592,7 +592,7 @@ def generate_html():
     with open('index.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
     
-    print("Fichier index.html généré ! Graphique modifié : Ajout d'une courbe de loi de puissance (exposant 5.8) en pointillé orange clair, projetée sur 5 ans. Historique conservé en continu. Titre du graphique mis à jour.")
+    print("Fichier index.html généré ! Graphique modifié : Ajout d'une courbe de loi de puissance (exposant 5.6) en pointillé orange clair, projetée sur 5 ans. Historique conservé en continu. Titre du graphique mis à jour.")
 
 if __name__ == "__main__":
     generate_html()
