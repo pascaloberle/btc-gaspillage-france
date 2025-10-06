@@ -449,7 +449,7 @@ def generate_html():
             <p>La loi de puissance modélise la croissance du prix BTC : P(t) = a * t^5.6, où t = jours depuis genèse (2009). Calibrée sur prix actuel, elle projette une hausse ~35-40%/an. Exposant 5.6 est historique (basé sur données 2010-2025).</p>
             <div class="additional-text">
                 <ul>
-                    <li>Ce manque à gagner n'inclut pas les potentielles retombées économiques de réindustrialiser la France avec une nouvelle industrie novatrice.</li>
+                    <li>Ce manque à gagner n'inclut pas les potentielles retombées économiques de réindustrialiser la France avec une nouvelle industrie novatrice faisant de l'optimisation sous contraintes de réseaux électriques.</li>
                     <li>La création d'emplois dans des régions rurales et là où les containers de minage peuvent s'implémenter. <span class="tooltip"><span class="tooltiptext">Serveurs : ASIC spéciaux (ex. Antminer, ~5k€/unité). Placés en data centers sécurisés (Nord France pour froid/élec pas chère), propriété État/EDF. Investissement ~1-5 Md€, amorti par BTC.</span></span></li>
                     <li>Aide à l'effort national pour repasser sous les 3% de déficit (sans taxe, ni subvention).</li>
                     <li>La potentielle mise en place de circularité en injectant une partie des profits dans les collectivités locales.</li>
