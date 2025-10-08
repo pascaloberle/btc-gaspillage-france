@@ -425,7 +425,7 @@ def generate_html():
             <div class="label">MW/Jour Nécessaires <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Pour miner, il faut de l'électricité. Ici, estimés sur surplus nucléaire bas carbone par exemple. Pour 3% par exemple, ~900 MW/jour, semble faisable sans impact réseau.</span></span></div>
             <div class="counter" id="mwhCounter">0</div>
 
-            <div class="label">Total Manqués (€) <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Valeur actuelle des BTC manqués (coût d'opportunité total). Pour 3% par exemple, ~10 milliards € aujourd'hui. Formule (BTC minés × prix actuel), sans déduire coûts (élec ~3 Md€ sur période (?)).</span></span></div>
+            <div class="label">Total Manqués (€) <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Valeur actuelle des BTC manqués (coût d'opportunité total). Pour 3% par exemple, >10 milliards € aujourd'hui. Formule (BTC minés × prix actuel), sans déduire coûts (élec ~3 Md€ sur période).</span></span></div>
             <div class="counter" id="totalEurosCounter">0</div>
             
             <div class="label">BTC Manqués <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Les BTC "manqués" sont les récompenses que la France aurait gagnées en minant. "Miner" n'est pas creuser de l'or, mais un processus informatique : des ordinateurs résolvent des puzzles pour ajouter des blocs à la blockchain et sécuriser les transactions. Le premier qui résout gagne ~3.125 BTC/bloc dans le cycle actuel. Les "pools" de minage permettent de distribuer les récompenses aux différents mineurs en fonction de leur part de hachage du réseau.</span></span></div>
