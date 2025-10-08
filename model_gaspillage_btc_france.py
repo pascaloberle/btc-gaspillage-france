@@ -98,7 +98,7 @@ def calculate_mined_btc(start_block, current_block):
     
     return total_btc
 
-def calculate_opportunity_cost(share=0.03):  # 3% de part hypothétique
+def calculate_opportunity_cost(share=0.05):  # 5% de part hypothétique
     """Calcule le coût d'opportunité, plus données pour graphique."""
     start_block = 499500  # Hauteur approximative au 1er janvier 2018
     current_block = get_current_block_height()
@@ -671,8 +671,8 @@ def generate_html():
 
         // Initialisation
         window.onload = () => {{
-            // Animation initiale avec share=10
-            const initialShare = 0.03;
+            // Animation initiale avec share=5
+            const initialShare = 0.05;
             const initialMw = initialTotalMw * initialShare;
             
             document.getElementById('totalEurosCounter').textContent = '0';
