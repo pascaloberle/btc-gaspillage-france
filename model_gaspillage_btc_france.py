@@ -168,7 +168,6 @@ def generate_html():
             padding: 40px; 
             display: flex; 
             flex-direction: column; 
-            justify-content: center; 
             background: #000; 
         }}
         .right {{ 
