@@ -416,8 +416,7 @@ def generate_html():
                 <option value="1">1%</option>
                 <option value="2">2%</option>
                 <option value="3">3%</option>
-                <option value="Scenario de base (1 GW)" selected></option>
-                <option value="5">5%</option>
+                <option value="5" selected>5%</option>
                 <option value="10">10%</option>
                 <option value="15">15%</option>
             </select>
