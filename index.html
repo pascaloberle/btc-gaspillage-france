@@ -326,7 +326,7 @@
             <br />
                 <button type="button" class="collapsible"><h4>Effectuer une simulation complète : Minage Bitcoin - France (En Euro)</h4></button>
                 <div class="collapsible-content">
-                    <p style="color: #FF9900;">Cette simulation modélise un déploiement variable sur surplus EDF (2026-2030), avec loi de puissance pour le prix BTC (en USD, convertis en EUR), halving 2028, et croissance du hash global. Glissez les sliders pour ajuster les paramètres et voir les mises à jour en temps réel. <span class="tooltip"><span class="tooltiptext">"La France" = l'État français (gouvernement, via Ministère Économie/Transition Écologique), pas la Banque de France. Initiative publique pour souveraineté numérique, comme un projet d'infrastructure (ex. TGV). Sécurité : Data centers blindés (ANSSI audits), wallets offline multi-sig. Pourquoi 2018 ? Équilibre : post-bulle 2017, maturité tech, inclut 2 halvings ; pas 2015 (trop volatile), pas 2021 (moins de recul).</span></span></p>
+                    <p style="color: #FF9900;">Cette simulation modélise un déploiement variable sur surplus EDF (2026-2032), avec loi de puissance pour le prix BTC (en USD, convertis en EUR), halving 2028, et croissance du hash global. Glissez les sliders pour ajuster les paramètres et voir les mises à jour en temps réel. <span class="tooltip"><span class="tooltiptext">"La France" = l'État français (gouvernement, via Ministère Économie/Transition Écologique), pas la Banque de France. Initiative publique pour souveraineté numérique, comme un projet d'infrastructure (ex. TGV). Sécurité : Data centers blindés (ANSSI audits), wallets offline multi-sig. Pourquoi 2018 ? Équilibre : post-bulle 2017, maturité tech, inclut 2 halvings ; pas 2015 (trop volatile), pas 2021 (moins de recul).</span></span></p>
                     
                     <div class="slider-container">
                         <label>Nombre de GW : <span class="tooltip"><span class="tooltiptext">Puissance allouée (ex. 1 GW = 1000 MW). Interruptible sur surplus EDF, avec récupération chaleur (chauffage urbain). Pour 1 GW, ~55 EH/s (5.5% global), investissement ~2-3 Md€ (hardware + infra), amorti <6 mois.</span></span></label>
@@ -342,8 +342,8 @@
                     
                     <div class="slider-container">
                         <label>Croissance hash/an (%): <span class="tooltip"><span class="tooltiptext">Croissance annuelle estimée du hash global (~50%/an historique). Dilue le % français sans upgrade hardware.</span></span></label>
-                        <input type="range" id="growthSlider" min="0" max="100" step="5" value="50">
-                        <span id="growthValue">50</span>
+                        <input type="range" id="growthSlider" min="0" max="100" step="5" value="30">
+                        <span id="growthValue">30</span>
                     </div>
                     
                     <div class="slider-container">
@@ -448,15 +448,15 @@
         }
 
         // Données embeddées initiales
-        const initialTotalEuros = 16672748597;
-        const initialBtc = 159419.6875;
-        const initialPrice = 104584;
-        const initialBlocks = 418786;
+        const initialTotalEuros = 16651132800;
+        const initialBtc = 159420.3125;
+        const initialPrice = 104448;
+        const initialBlocks = 418790;
         const histData = [{"x": 2018.0, "y": 10000}, {"x": 2025.0, "y": 97000}];
-        const powerData = [{"x": 2025.7638603696098, "y": 104584.0}, {"x": 2025.8459958932237, "y": 107486.05408709537}, {"x": 2025.9281314168377, "y": 110453.93072531838}, {"x": 2026.0102669404519, "y": 113488.79258933752}, {"x": 2026.0924024640658, "y": 116591.81711403186}, {"x": 2026.1745379876797, "y": 119764.19660924388}, {"x": 2026.2566735112937, "y": 123007.13837486539}, {"x": 2026.3388090349076, "y": 126321.86481625575}, {"x": 2026.4209445585216, "y": 129709.61355999162}, {"x": 2026.5030800821355, "y": 133171.6375699479}, {"x": 2026.5852156057495, "y": 136709.2052637089}, {"x": 2026.6673511293634, "y": 140323.60062930954}, {"x": 2026.7494866529773, "y": 144016.12334230545}, {"x": 2026.8316221765913, "y": 147788.08888317167}, {"x": 2026.9137577002052, "y": 151640.8286550295}, {"x": 2026.9958932238194, "y": 155575.6901017004}, {"x": 2027.0780287474333, "y": 159594.03682608658}, {"x": 2027.1601642710473, "y": 163697.24870887815}, {"x": 2027.2422997946612, "y": 167886.72202758523}, {"x": 2027.3244353182752, "y": 172163.8695758953}, {"x": 2027.406570841889, "y": 176530.12078335503}, {"x": 2027.488706365503, "y": 180986.92183537534}, {"x": 2027.570841889117, "y": 185535.73579356013}, {"x": 2027.652977412731, "y": 190178.04271635762}, {"x": 2027.7351129363449, "y": 194915.33978003333}, {"x": 2027.817248459959, "y": 199749.14139996466}, {"x": 2027.899383983573, "y": 204680.97935225672}, {"x": 2027.981519507187, "y": 209712.40289567786}, {"x": 2028.0636550308009, "y": 214844.97889391557}, {"x": 2028.1457905544148, "y": 220080.29193815106}, {"x": 2028.2279260780288, "y": 225419.94446995293}, {"x": 2028.3100616016427, "y": 230865.55690448865}, {"x": 2028.3921971252566, "y": 236418.76775405373}, {"x": 2028.4743326488706, "y": 242081.23375191793}, {"x": 2028.5564681724845, "y": 247854.62997648772}, {"x": 2028.6386036960985, "y": 253740.649975785}, {"x": 2028.7207392197124, "y": 259741.00589224102}, {"x": 2028.8028747433266, "y": 265857.4285878053}, {"x": 2028.8850102669405, "y": 272091.6677693685}, {"x": 2028.9671457905545, "y": 278445.49211449997}, {"x": 2029.0492813141684, "y": 284920.6893974975}, {"x": 2029.1314168377824, "y": 291519.06661575066}, {"x": 2029.2135523613963, "y": 298242.4501164163}, {"x": 2029.2956878850102, "y": 305092.6857234054}, {"x": 2029.3778234086242, "y": 312071.6388646814}, {"x": 2029.4599589322381, "y": 319181.19469986955}, {"x": 2029.542094455852, "y": 326423.258248176}, {"x": 2029.624229979466, "y": 333799.754516617}, {"x": 2029.7063655030802, "y": 341312.62862855697}, {"x": 2029.7885010266941, "y": 348963.8459525559}, {"x": 2029.870636550308, "y": 356755.3922315241}, {"x": 2029.952772073922, "y": 364689.27371218585}, {"x": 2030.034907597536, "y": 372767.5172748492}, {"x": 2030.11704312115, "y": 380992.17056348315}, {"x": 2030.1991786447638, "y": 389365.30211610155}, {"x": 2030.2813141683778, "y": 397889.00149545143}, {"x": 2030.3634496919917, "y": 406565.37942000834}, {"x": 2030.4455852156057, "y": 415396.5678952755}, {"x": 2030.5277207392196, "y": 424384.72034538764}, {"x": 2030.6098562628338, "y": 433532.0117450187}, {"x": 2030.6919917864477, "y": 442840.6387515935}];
+        const powerData = [{"x": 2025.7638603696098, "y": 104448.0}, {"x": 2025.8459958932237, "y": 107346.28028464141}, {"x": 2025.9281314168377, "y": 110310.2975254155}, {"x": 2026.0102669404519, "y": 113341.21288506011}, {"x": 2026.0924024640658, "y": 116440.20226732962}, {"x": 2026.1745379876797, "y": 119608.45643159858}, {"x": 2026.2566735112937, "y": 122847.18110779795}, {"x": 2026.3388090349076, "y": 126157.59711168325}, {"x": 2026.4209445585216, "y": 129540.94046043378}, {"x": 2026.5030800821355, "y": 132998.46248858256}, {"x": 2026.5852156057495, "y": 136531.42996427623}, {"x": 2026.6673511293634, "y": 140141.1252058644}, {"x": 2026.7494866529773, "y": 143828.8461988174}, {"x": 2026.8316221765913, "y": 147595.9067129725}, {"x": 2026.9137577002052, "y": 151443.6364201075}, {"x": 2026.9958932238194, "y": 155373.38101184124}, {"x": 2027.0780287474333, "y": 159386.5023178602}, {"x": 2027.1601642710473, "y": 163484.37842447127}, {"x": 2027.2422997946612, "y": 167668.40379347914}, {"x": 2027.3244353182752, "y": 171939.98938138832}, {"x": 2027.406570841889, "y": 176300.56275892936}, {"x": 2027.488706365503, "y": 180751.56823090801}, {"x": 2027.570841889117, "y": 185294.46695637738}, {"x": 2027.652977412731, "y": 189930.7370691322}, {"x": 2027.7351129363449, "y": 194661.87379852484}, {"x": 2027.817248459959, "y": 199489.3895906019}, {"x": 2027.899383983573, "y": 204414.81422956198}, {"x": 2027.981519507187, "y": 209439.69495953264}, {"x": 2028.0636550308009, "y": 214565.5966066673}, {"x": 2028.1457905544148, "y": 219794.1017015605}, {"x": 2028.2279260780288, "y": 225126.8106019816}, {"x": 2028.3100616016427, "y": 230565.34161592627}, {"x": 2028.3921971252566, "y": 236111.33112498478}, {"x": 2028.4743326488706, "y": 241766.43370802727}, {"x": 2028.5564681724845, "y": 247532.32226520492}, {"x": 2028.6386036960985, "y": 253410.68814226644}, {"x": 2028.7207392197124, "y": 259403.24125519002}, {"x": 2028.8028747433266, "y": 265511.71021512937}, {"x": 2028.8850102669405, "y": 271737.84245367366}, {"x": 2028.9671457905545, "y": 278083.4043484213}, {"x": 2029.0492813141684, "y": 284550.18134886614}, {"x": 2029.1314168377824, "y": 291139.9781025963}, {"x": 2029.2135523613963, "y": 297854.6185818046}, {"x": 2029.2956878850102, "y": 304695.946210111}, {"x": 2029.3778234086242, "y": 311665.8239896948}, {"x": 2029.4599589322381, "y": 318766.1346287384}, {"x": 2029.542094455852, "y": 325998.7806691797}, {"x": 2029.624229979466, "y": 333365.6846147749}, {"x": 2029.7063655030802, "y": 340868.7890594691}, {"x": 2029.7885010266941, "y": 348510.0568160766}, {"x": 2029.870636550308, "y": 356291.47104526724}, {"x": 2029.952772073922, "y": 364215.03538486187}, {"x": 2030.034907597536, "y": 372282.77407943323}, {"x": 2030.11704312115, "y": 380496.73211021465}, {"x": 2030.1991786447638, "y": 388858.9753253134}, {"x": 2030.2813141683778, "y": 397371.5905702298}, {"x": 2030.3634496919917, "y": 406036.6858186819}, {"x": 2030.4455852156057, "y": 414856.39030373417}, {"x": 2030.5277207392196, "y": 423832.8546492298}, {"x": 2030.6098562628338, "y": 432968.2510015272}, {"x": 2030.6919917864477, "y": 442264.7731615394}];
         const initialTotalMw = 29718.734519744517;
         const startBlock = 499500;
-        const initialCurrentBlock = 918286;
+        const initialCurrentBlock = 918290;
 
         let currentShare = 3;
         let lastHeight = initialCurrentBlock;
@@ -606,7 +606,7 @@
         const BLOCKS_PER_DAY = 144;
         const DAYS_PER_YEAR = 365.25;
         const FEES_PER_BLOCK = 0.022;
-        let A_POWER_LAW = 6.493298907833872e-17;  // Calibré initialement
+        let A_POWER_LAW = 6.48485508610717e-17;  // Calibré initialement
         let ANNUAL_GROWTH_RATE = 1.5;  // 50% initial
         let EXCHANGE_RATE = 0.85;
         let FRENCH_HASH_EH_S = BASE_FRENCH_HASH_EH_S * 1;  // Initial pour 1 GW
@@ -665,11 +665,11 @@
             
             // Recalculer A si exposant change (calibré sur prix actuel ~123000 USD)
             const currentDays = getDaysFromGenesis(2025);
-            const currentPrice = 104584;
+            const currentPrice = 104448;
             A_POWER_LAW = currentPrice / Math.pow(currentDays, exponent);
             
             // Calcul des données
-            const years = [2026, 2027, 2028, 2029, 2030];
+            const years = [2026, 2027, 2028, 2029, 2030, 2031, 2032];
             let simulationData = [];
             let cumulativeRevenueEur = 0;
             

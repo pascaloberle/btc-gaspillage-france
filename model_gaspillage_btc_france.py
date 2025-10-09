@@ -472,7 +472,7 @@ def generate_html():
             <br />
                 <button type="button" class="collapsible"><h4>Effectuer une simulation complète : Minage Bitcoin - France (En Euro)</h4></button>
                 <div class="collapsible-content">
-                    <p style="color: #FF9900;">Cette simulation modélise un déploiement variable sur surplus EDF (2026-2030), avec loi de puissance pour le prix BTC (en USD, convertis en EUR), halving 2028, et croissance du hash global. Glissez les sliders pour ajuster les paramètres et voir les mises à jour en temps réel. <span class="tooltip"><span class="tooltiptext">"La France" = l'État français (gouvernement, via Ministère Économie/Transition Écologique), pas la Banque de France. Initiative publique pour souveraineté numérique, comme un projet d'infrastructure (ex. TGV). Sécurité : Data centers blindés (ANSSI audits), wallets offline multi-sig. Pourquoi 2018 ? Équilibre : post-bulle 2017, maturité tech, inclut 2 halvings ; pas 2015 (trop volatile), pas 2021 (moins de recul).</span></span></p>
+                    <p style="color: #FF9900;">Cette simulation modélise un déploiement variable sur surplus EDF (2026-2032), avec loi de puissance pour le prix BTC (en USD, convertis en EUR), halving 2028, et croissance du hash global. Glissez les sliders pour ajuster les paramètres et voir les mises à jour en temps réel. <span class="tooltip"><span class="tooltiptext">"La France" = l'État français (gouvernement, via Ministère Économie/Transition Écologique), pas la Banque de France. Initiative publique pour souveraineté numérique, comme un projet d'infrastructure (ex. TGV). Sécurité : Data centers blindés (ANSSI audits), wallets offline multi-sig. Pourquoi 2018 ? Équilibre : post-bulle 2017, maturité tech, inclut 2 halvings ; pas 2015 (trop volatile), pas 2021 (moins de recul).</span></span></p>
                     
                     <div class="slider-container">
                         <label>Nombre de GW : <span class="tooltip"><span class="tooltiptext">Puissance allouée (ex. 1 GW = 1000 MW). Interruptible sur surplus EDF, avec récupération chaleur (chauffage urbain). Pour 1 GW, ~55 EH/s (5.5% global), investissement ~2-3 Md€ (hardware + infra), amorti <6 mois.</span></span></label>
@@ -488,8 +488,8 @@ def generate_html():
                     
                     <div class="slider-container">
                         <label>Croissance hash/an (%): <span class="tooltip"><span class="tooltiptext">Croissance annuelle estimée du hash global (~50%/an historique). Dilue le % français sans upgrade hardware.</span></span></label>
-                        <input type="range" id="growthSlider" min="0" max="100" step="5" value="50">
-                        <span id="growthValue">50</span>
+                        <input type="range" id="growthSlider" min="0" max="100" step="5" value="30">
+                        <span id="growthValue">30</span>
                     </div>
                     
                     <div class="slider-container">
@@ -815,7 +815,7 @@ def generate_html():
             A_POWER_LAW = currentPrice / Math.pow(currentDays, exponent);
             
             // Calcul des données
-            const years = [2026, 2027, 2028, 2029, 2030];
+            const years = [2026, 2027, 2028, 2029, 2030, 2031, 2032];
             let simulationData = [];
             let cumulativeRevenueEur = 0;
             
