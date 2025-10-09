@@ -149,7 +149,7 @@ def generate_html():
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" http-equiv="refresh" content="600">
     <title>Compteur Bitcoin France</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -416,7 +416,8 @@ def generate_html():
                 <option value="1">1%</option>
                 <option value="2">2%</option>
                 <option value="3">3%</option>
-                <option value="5" selected>5%</option>
+                <option value="Scenario de base (1 GW)" selected></option>
+                <option value="5">5%</option>
                 <option value="10">10%</option>
                 <option value="15">15%</option>
             </select>
