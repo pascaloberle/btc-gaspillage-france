@@ -98,7 +98,7 @@ def calculate_mined_btc(start_block, current_block):
     
     return total_btc
 
-def calculate_opportunity_cost(share=0.05):  # 5% de part hypothétique
+def calculate_opportunity_cost(share=0.03):  # 3% de part hypothétique
     """Calcule le coût d'opportunité, plus données pour graphique."""
     start_block = 499500  # Hauteur approximative au 1er janvier 2018
     current_block = get_current_block_height()
@@ -415,13 +415,13 @@ def generate_html():
             <select id="shareSelect" class="share-select">
                 <option value="1">1%</option>
                 <option value="2">2%</option>
-                <option value="3">3%</option>
-                <option value="5" selected>5%</option>
+                <option value="3" selected>3%</option>
+                <option value="5">5%</option>
                 <option value="10">10%</option>
                 <option value="15">15%</option>
             </select>
             
-            <div class="label">MW/Jour Nécessaires <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Pour miner, il faut de l'électricité. Ici, estimés sur surplus nucléaire bas carbone par exemple. Pour 3% par exemple, ~900 MW/jour, semble faisable sans impact réseau.</span></span></div>
+            <div class="label">MW/Jour Nécessaires <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Pour miner, il faut de l'électricité. Ici, estimés sur surplus nucléaire bas carbone par exemple. Pour 3% par exemple, ~1 GW/jour, semble faisable sans impact réseau.</span></span></div>
             <div class="counter" id="mwhCounter">0</div>
 
             <div class="label">Total Manqués (€) <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Valeur actuelle des BTC manqués (coût d'opportunité total en milliards €). Pour 3% par exemple, >10 milliards € aujourd'hui. Formule (BTC minés × prix actuel), sans déduire coûts (élec ~3 Md€ sur période).</span></span></div>
@@ -670,8 +670,8 @@ def generate_html():
 
         // Initialisation
         window.onload = () => {{
-            // Animation initiale avec share=5
-            const initialShare = 0.05;
+            // Animation initiale avec share=3
+            const initialShare = 0.03;
             const initialMw = initialTotalMw * initialShare;
             
             document.getElementById('totalEurosCounter').textContent = '0';
