@@ -421,7 +421,7 @@ def generate_html():
                 <option value="15">15%</option>
             </select>
             
-            <div class="label">MW/Jour Nécessaires <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Pour miner, il faut de l'électricité. Ici, il s'agirait, par exemple, de surplus nucléaire et énergies intermittentes bas-carbone disponible chaque jour en France pour optimiser & limiter les gaspillages sur le réseau électrique France.</span></span></div>
+            <div class="label">MW/Jour Nécessaires <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Pour miner, il faut de l'électricité. Ici, il s'agirait, par exemple, de surplus nucléaire et énergies intermittentes bas-carbone disponible chaque jour en France pour optimiser & limiter les gaspillages sur le réseau électrique France (optimisation sous contraintes).</span></span></div>
             <div class="counter" id="mwhCounter">0</div>
 
             <div class="label">Total Manqués (€) <span class="tooltip"><span class="tooltip-icon">?</span><span class="tooltiptext">Valeur actuelle des BTC manqués (coût d'opportunité total en milliards €). Pour 3% par exemple, >10 milliards € aujourd'hui. Formule (BTC minés × prix actuel), sans déduire coûts (élec ~3 Md€ sur période).</span></span></div>
