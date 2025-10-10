@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horloge du Gaspillage Bitcoin - FRANCE EN FEU !</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Impact:wght@400;900&display=swap');
+        body { 
+            font-family: 'Impact', sans-serif; 
+            background: linear-gradient(45deg, #000 0%, #8B0000 50%, #000 100%); 
+            background-size: 400% 400%;
+            animation: bleed 5s ease infinite;
+            color: #fff; 
+            text-align: center; 
+            margin: 0; 
+            padding: 20px; 
+            overflow: hidden;
+        }
+        @keyframes bleed {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { 
+            font-size: 4em; 
+            color: #ff0000; 
+            text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000; 
+            margin-bottom: 30px; 
+            animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.05); opacity: 0.7; }
+        }
+        .counter { 
+            font-size: 3.5em; 
+            font-weight: 900; 
+            margin: 15px 0; 
+            padding: 25px; 
+            background: rgba(0,0,0,0.8); 
+            border: 3px solid #ff0000; 
+            border-radius: 15px; 
+            box-shadow: 0 0 30px #ff0000, inset 0 0 20px rgba(255,0,0,0.2); 
+            transition: all 0.5s ease;
+            color: #ffcccc;
+        }
+        .counter.shake { animation: shake 0.5s ease-in-out; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+        .counter.flash { animation: flash 0.3s ease; background: #ff0000; color: #000; box-shadow: 0 0 50px #ff0000; }
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .label { font-size: 1.5em; color: #ff6666; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
+        .updating { color: #ff0000; font-size: 1em; font-weight: bold; animation: pulse 2s infinite; }
+        .blocks-label { font-size: 1em; color: #ccc; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 GASPILLAGE BITCOIN FRANCE - DES MILLIARDS PERDUS À JAMAIS ! 🚨</h1>
+        <p>Ce que la France aurait pu miner depuis 2018 (10% puissance globale). Et ça empire... selon la loi de puissance !</p>
+        
+        <div class="label">Total Gaspillage en € (complets)</div>
+        <div class="counter" id="totalEurosCounter">0</div>
+        
+        <div class="label">BTC Manqués (total)</div>
+        <div class="counter" id="btcCounter">0</div>
+        
+        <div class="label">Prix BTC Actuel (€)</div>
+        <div class="counter" id="priceCounter">0</div>
+        
+        <div class="label">Blocs Manqués (depuis 2018)</div>
+        <div class="counter" id="blocksCounter">0</div>
+        <div class="blocks-label">Nouveaux blocs simulés en temps réel...</div>
+        
+        <div class="updating">🚨 MISE À JOUR EN TEMPS RÉEL - LA LOI DE PUISSANCE ACCÉLÈRE LE CAUCHEMAR ! 🚨<br>Dernière : 2025-09-30 05:16:29</div>
+    </div>
+
+    <script>
+        // Animation initiale des compteurs (de 0 à valeur initiale)
+        function animateCounter(id, target, duration = 3000, suffix = '') {
+            const counter = document.getElementById(id);
+            const start = parseInt(counter.textContent.replace(/,/g, '')) || 0;
+            const range = target - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                    if (id === 'totalEurosCounter') counter.textContent = Math.floor(current).toLocaleString() + suffix;
+                    else if (id === 'btcCounter') counter.textContent = Math.floor(current).toLocaleString() + suffix;
+                    else if (id === 'priceCounter') counter.textContent = Math.floor(current).toLocaleString() + suffix;
+                    else counter.textContent = Math.floor(current).toLocaleString();
+                } else {
+                    if (id === 'totalEurosCounter') counter.textContent = Math.floor(current).toLocaleString() + suffix;
+                    else if (id === 'btcCounter') counter.textContent = Math.floor(current).toLocaleString() + suffix;
+                    else if (id === 'priceCounter') counter.textContent = current.toFixed(2).toLocaleString() + suffix;
+                    else counter.textContent = Math.floor(current).toLocaleString();
+                }
+                counter.classList.add('shake', 'flash');
+                setTimeout(() => counter.classList.remove('shake', 'flash'), 500);
+            }, 16);
+        }
+
+        // Params embeddés depuis Python
+        const initialTotalEuros = 31088690828;
+        const initialBtc = 318440.3125;
+        const initialPrice = 97628;
+        const initialBlocks = 417509;  // Blocs depuis 2018 approx
+        const A = 1.0697908940301086e-17;
+        const exponent = 5.8;
+        const currentDays = 6113;
+        const blockTimeDays = 0.006944444444444444;
+        const reward = 3.125;
+        const share = 0.1;
+
+        let totalEuros = initialTotalEuros;
+        let totalBtc = initialBtc;
+        let currentPrice = initialPrice;
+        let blocksMissed = initialBlocks;
+        let simDays = currentDays;
+
+        // Initialisation
+        window.onload = () => {
+            document.getElementById('totalEurosCounter').textContent = '0';
+            document.getElementById('btcCounter').textContent = '0';
+            document.getElementById('priceCounter').textContent = '0';
+            document.getElementById('blocksCounter').textContent = '0';
+            
+            animateCounter('totalEurosCounter', initialTotalEuros, 3000, ' €');
+            animateCounter('btcCounter', initialBtc, 3000, ' BTC');
+            animateCounter('priceCounter', initialPrice, 2000, ' €');
+            animateCounter('blocksCounter', initialBlocks, 2000, '');
+        };
+
+        // Incrément infini : Simulation d'un nouveau bloc toutes les 10 min (mais accéléré pour démo : toutes les 5s)
+        setInterval(() => {
+            simDays += blockTimeDays;
+            currentPrice = A * Math.pow(simDays, exponent);
+            
+            const newBtc = reward * share;
+            const addValue = newBtc * currentPrice;
+            
+            totalEuros += addValue;
+            totalBtc += newBtc;
+            blocksMissed += 1;
+            
+            // Mise à jour avec animation
+            animateCounter('totalEurosCounter', totalEuros, 1000, ' €');
+            animateCounter('btcCounter', totalBtc, 1000, ' BTC');
+            animateCounter('priceCounter', currentPrice, 1000, ' €');
+            animateCounter('blocksCounter', blocksMissed, 1000, '');
+            
+            // Flash global pour choc
+            document.body.classList.add('flash');
+            setTimeout(() => document.body.classList.remove('flash'), 300);
+        }, 5000);  // Accéléré à 5s pour voir l'effet ; changez à 600000 pour réel (10 min)
+    </script>
+</body>
+</html>
+    
